@@ -1,0 +1,30 @@
+{
+  "name": "latrinebot-monorepo",
+  "version": "0.4.3",
+  "description": "Public Latrine Bot monorepo: docs, SDK, widgets, calculator, CLI.",
+  "license": "SEE LICENSE IN LICENSE",
+  "private": true,
+  "type": "module",
+  "homepage": "https://latrinebot.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dfnwtf/latrinebot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dfnwtf/latrinebot/issues"
+  },
+  "workspaces": [
+    "sdk",
+    "widgets",
+    "cli"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "check-leaks": "node ../scripts/check-leaks.mjs latrinebot"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
