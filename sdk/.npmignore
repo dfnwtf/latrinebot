@@ -1,0 +1,7 @@
+tests/
+examples/
+.github/
+tsconfig.json
+*.tgz
+.gitignore
+.npmrc
