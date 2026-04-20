@@ -1,0 +1,60 @@
+{
+  "name": "@latrinebot/sdk",
+  "version": "0.4.3",
+  "description": "TypeScript client and OpenAPI 3.1 spec for the Latrine Bot public API.",
+  "license": "MIT",
+  "author": "dfnwtf",
+  "homepage": "https://github.com/dfnwtf/latrinebot/tree/main/sdk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dfnwtf/latrinebot.git",
+    "directory": "sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/dfnwtf/latrinebot/issues"
+  },
+  "keywords": [
+    "latrine-bot",
+    "latrinebot",
+    "pumpfun",
+    "pump-fun",
+    "solana",
+    "sdk",
+    "openapi"
+  ],
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./openapi.yaml": "./openapi.yaml"
+  },
+  "files": [
+    "dist",
+    "src",
+    "openapi.yaml",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test tests/",
+    "prepublishOnly": "npm run lint && npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
