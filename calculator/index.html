@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Latrine Bot eligibility calculator</title>
+  <meta name="description" content="Calculator for Latrine Bot eligibility tiers, anti-whale cap, hold cycles." />
+  <link rel="icon" href="data:," />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <h1>Eligibility calculator</h1>
+    <p>
+      Plug in a market cap, supply, and wallet balance.
+      See exactly where the wallet lands in the
+      <a href="https://github.com/dfnwtf/latrinebot-docs/blob/main/docs/eligibility.md">Latrine Bot eligibility tiers</a>.
+    </p>
+  </header>
+
+  <main class="grid">
+    <section class="card">
+      <h2>Inputs</h2>
+
+      <label>
+        Market cap (USD)
+        <input id="mc" type="number" min="0" step="1000" value="250000" />
+      </label>
+
+      <label>
+        Token supply
+        <input id="supply" type="number" min="1" step="1" value="1000000000" />
+        <small>Default is the fixed Pump.fun supply.</small>
+      </label>
+
+      <label>
+        Wallet balance (tokens)
+        <input id="balance" type="number" min="0" step="1" value="500000" />
+      </label>
+
+      <label>
+        Anti-whale cap (tokens)
+        <input id="cap" type="number" min="0" step="1" value="20000000" />
+        <small>Set 0 to disable. Default 20 M = 2 % of 1 B.</small>
+      </label>
+
+      <label>
+        Cycles already held
+        <input id="held" type="number" min="0" step="1" value="0" />
+        <small>How long has the wallet been in the eligible band, in cycles.</small>
+      </label>
+
+      <details>
+        <summary>Custom tier table (JSON)</summary>
+        <textarea id="tiers" rows="14" spellcheck="false"></textarea>
+        <div class="row">
+          <button type="button" id="resetTiers">Reset to defaults</button>
+          <button type="button" id="prettyTiers">Pretty print</button>
+        </div>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>Result</h2>
+      <div id="result" class="result"></div>
+
+      <h3>Active tier</h3>
+      <table id="activeTier">
+        <thead>
+          <tr><th>MC USD</th><th>Min tokens</th><th>Hold cycles</th><th>Min position (USD)</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Full tier table</h3>
+      <table id="allTiers">
+        <thead>
+          <tr><th>MC USD</th><th>Min tokens</th><th>Hold cycles</th><th>Min USD</th><th>Active</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    Source: <a href="https://github.com/dfnwtf/latrinebot-calculator">github.com/dfnwtf/latrinebot-calculator</a>
+    -
+    <a href="https://latrinebot.com">latrinebot.com</a>
+    -
+    <a href="https://github.com/dfnwtf/latrinebot-docs">docs</a>
+  </footer>
+
+  <script src="./app.js" type="module"></script>
+</body>
+</html>
