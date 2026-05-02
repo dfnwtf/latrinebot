@@ -1,0 +1,899 @@
+openapi: 3.1.0
+info:
+  title: Latrine Bot API
+  version: 0.4.3
+  summary: Cloud automation engine for Pump.fun tokens.
+  description: |
+    Public HTTP API for [Latrine Bot](https://latrinebot.com). Covers authentication
+    (Sign-in with Solana, Google OAuth, X OAuth), project CRUD, lifecycle (preflight,
+    start, stop, run-once), widgets, share cards, metrics keys, and public read
+    endpoints.
+
+    Admin endpoints, runner endpoints, and anything that touches raw secrets are
+    intentionally not included in this specification.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  contact:
+    name: Latrine Bot
+    url: https://latrinebot.com
+servers:
+  - url: https://api.latrinebot.com
+    description: Production
+
+tags:
+  - name: discovery
+  - name: auth
+  - name: projects
+  - name: credentials
+  - name: lifecycle
+  - name: widgets
+  - name: share-card
+  - name: metrics-keys
+  - name: metrics
+  - name: public
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/health:
+    get:
+      tags: [discovery]
+      summary: Service health probe
+      security: []
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  engine: { type: string }
+
+  /api/v1:
+    get:
+      tags: [discovery]
+      summary: API name and version
+      security: []
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name: { type: string, example: latrine-bot }
+                  version: { type: string, example: 0.4.3 }
+
+  /api/auth/challenge:
+    get:
+      tags: [auth]
+      summary: Build a Sign-in with Solana challenge
+      security: []
+      parameters:
+        - in: query
+          name: wallet
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthChallenge" }
+
+  /api/auth/verify:
+    post:
+      tags: [auth]
+      summary: Verify a signed SIWS challenge
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AuthVerifyInput" }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthSession" }
+
+  /api/auth/providers:
+    get:
+      tags: [auth]
+      summary: Which login methods are enabled
+      security: []
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  siws: { type: boolean }
+                  google: { type: boolean }
+                  x: { type: boolean }
+
+  /api/auth/google:
+    get:
+      tags: [auth]
+      summary: Start Google OAuth (redirects)
+      security: []
+      responses:
+        "302": { description: redirect to Google }
+
+  /api/auth/google/callback:
+    get:
+      tags: [auth]
+      summary: Google OAuth callback
+      security: []
+      responses:
+        "302": { description: redirect to app with login_code }
+
+  /api/auth/x:
+    get:
+      tags: [auth]
+      summary: Start X OAuth (redirects, PKCE)
+      security: []
+      responses:
+        "302": { description: redirect to X }
+
+  /api/auth/x/callback:
+    get:
+      tags: [auth]
+      summary: X OAuth callback
+      security: []
+      responses:
+        "302": { description: redirect to app with login_code }
+
+  /api/auth/complete-oauth:
+    post:
+      tags: [auth]
+      summary: Exchange a one-time login_code for a JWT
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [login_code]
+              properties:
+                login_code: { type: string }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AuthSession" }
+
+  /api/auth/me:
+    get:
+      tags: [auth]
+      summary: Current user
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /api/auth/logout:
+    post:
+      tags: [auth]
+      summary: Clear server session
+      responses:
+        "204": { description: no content }
+
+  /api/projects:
+    get:
+      tags: [projects]
+      summary: List your projects
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Project" }
+    post:
+      tags: [projects]
+      summary: Create a project (always LIVE)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, mint]
+              properties:
+                name: { type: string }
+                mint: { type: string }
+      responses:
+        "201":
+          description: created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Project" }
+
+  /api/projects/symbol:
+    get:
+      tags: [projects]
+      summary: Resolve a mint symbol
+      parameters:
+        - in: query
+          name: mint
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  symbol: { type: string, nullable: true }
+
+  /api/projects/{id}:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    get:
+      tags: [projects]
+      summary: Get a project
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Project" }
+    patch:
+      tags: [projects]
+      summary: Update name, mint, or settings
+      description: |
+        `mode` is read-only and cannot be changed via this endpoint. Any `mode`
+        field in the request body is silently dropped.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                mint: { type: string }
+                settings:
+                  $ref: "#/components/schemas/ProjectSettings"
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Project" }
+    delete:
+      tags: [projects]
+      summary: Delete a project
+      responses:
+        "204": { description: no content }
+
+  /api/projects/{id}/tiers/reset-default:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    post:
+      tags: [projects]
+      summary: Reset the eligibility tier table to defaults
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  eligibilityTiers:
+                    type: array
+                    items: { $ref: "#/components/schemas/EligibilityTier" }
+
+  /api/projects/{id}/secrets:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    post:
+      tags: [credentials]
+      summary: Save the encrypted dev wallet secret and RPC URL
+      description: |
+        Submitted values are encrypted with the service master key and never
+        returned in plaintext. The server only returns the derived public key.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [devWalletSecret, rpcUrl]
+              properties:
+                devWalletSecret: { type: string }
+                rpcUrl: { type: string, format: uri }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pubkey: { type: string }
+
+  /api/projects/{id}/credentials:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    get:
+      tags: [credentials]
+      summary: Credential metadata (pubkey + redacted RPC host)
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pubkey: { type: string, nullable: true }
+                  rpcHost: { type: string, nullable: true }
+
+  /api/projects/{id}/credentials/test:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    post:
+      tags: [credentials]
+      summary: Test the RPC URL
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  latencyMs: { type: number }
+
+  /api/projects/{id}/preflight:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    get:
+      tags: [lifecycle]
+      summary: Run the launch readiness preflight
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PreflightResult" }
+
+  /api/projects/{id}/status:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    get:
+      tags: [lifecycle]
+      summary: Current running state and stats
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProjectStats" }
+
+  /api/projects/{id}/stats:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    get:
+      tags: [lifecycle]
+      summary: Current stats bucket
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/StatsBucket" }
+
+  /api/projects/{id}/events:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    get:
+      tags: [lifecycle]
+      summary: Event log
+      parameters:
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+        - in: query
+          name: severity
+          schema: { type: string, enum: [info, warn, error] }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items: { $ref: "#/components/schemas/EventEntry" }
+
+  /api/projects/{id}/control/start:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    post:
+      tags: [lifecycle]
+      summary: Start the scheduler
+      description: Fails with `preflight_blocked` if any required check is red.
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  running: { type: boolean, enum: [true] }
+
+  /api/projects/{id}/control/stop:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    post:
+      tags: [lifecycle]
+      summary: Stop the scheduler
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  running: { type: boolean, enum: [false] }
+
+  /api/projects/{id}/control/run-once:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    post:
+      tags: [lifecycle]
+      summary: Force a single cycle now
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scheduled: { type: boolean, enum: [true] }
+
+  /api/projects/{id}/keys:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    get:
+      tags: [metrics-keys]
+      summary: List metrics keys (metadata only)
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/MetricsKey" }
+    post:
+      tags: [metrics-keys]
+      summary: Create a metrics key (plaintext returned **once**)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [label]
+              properties:
+                label: { type: string }
+      responses:
+        "201":
+          description: created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/MetricsKey"
+                  - type: object
+                    properties:
+                      key:
+                        type: string
+                        description: Plaintext metrics key. Save it now; never shown again.
+
+  /api/projects/{id}/keys/{keyId}:
+    parameters:
+      - { $ref: "#/components/parameters/ProjectId" }
+      - in: path
+        name: keyId
+        required: true
+        schema: { type: string }
+    delete:
+      tags: [metrics-keys]
+      summary: Revoke a metrics key
+      responses:
+        "204": { description: no content }
+
+  /api/v1/projects/{id}/metrics:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    get:
+      tags: [metrics]
+      summary: Read-only stats snapshot
+      security:
+        - metricsKeyAuth: []
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProjectStats" }
+
+  /api/v1/projects/{id}/events:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    get:
+      tags: [metrics]
+      summary: Read-only event tail
+      security:
+        - metricsKeyAuth: []
+      parameters:
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  events:
+                    type: array
+                    items: { $ref: "#/components/schemas/EventEntry" }
+
+  /api/public/widgets/{widgetId}/config:
+    get:
+      tags: [public]
+      summary: Widget layout + theme (cached 60s)
+      security: []
+      parameters:
+        - in: path
+          name: widgetId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { type: object }
+
+  /api/public/widgets/{widgetId}/live:
+    get:
+      tags: [public]
+      summary: Widget stats + event tail (cached 5s, 120 req/min/IP)
+      security: []
+      parameters:
+        - in: path
+          name: widgetId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProjectStats" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /api/public/realm/{id}/live:
+    get:
+      tags: [public]
+      summary: Per-token public LIVE stats
+      security: []
+      parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProjectStats" }
+
+  /api/public/realm/{id}/check-eligibility:
+    get:
+      tags: [public]
+      summary: Public eligibility lookup for a wallet
+      security: []
+      parameters:
+        - { $ref: "#/components/parameters/ProjectId" }
+        - in: query
+          name: wallet
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PublicEligibility" }
+
+  /api/public/realm/{id}/share-card/bundle:
+    get:
+      tags: [public]
+      summary: Per-token public share card bundle
+      security: []
+      parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ShareCardBundle" }
+
+  /api/public/ward-roll:
+    get:
+      tags: [public]
+      summary: Ward-roll realm listing
+      security: []
+      parameters:
+        - in: query
+          name: faces
+          schema: { type: integer, enum: [0, 1] }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  realms:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: string }
+                        symbol: { type: string }
+                        mc: { type: number, nullable: true }
+
+  /api/public/latrine/live:
+    get:
+      tags: [public]
+      summary: $LATRINE flagship showcase stats
+      security: []
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ProjectStats" }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    metricsKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Metrics-Key
+
+  parameters:
+    ProjectId:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    RateLimited:
+      description: Too many requests
+      headers:
+        Retry-After:
+          description: Seconds until the next request is allowed
+          schema: { type: integer }
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code: { type: string, example: rate_limited }
+                  message: { type: string }
+
+  schemas:
+    AuthChallenge:
+      type: object
+      required: [message, nonce, expiresAt]
+      properties:
+        message: { type: string }
+        nonce: { type: string }
+        expiresAt: { type: string, format: date-time }
+
+    AuthVerifyInput:
+      type: object
+      required: [wallet, signature]
+      properties:
+        wallet: { type: string }
+        signature: { type: string }
+
+    User:
+      type: object
+      properties:
+        id: { type: string }
+        handle: { type: string }
+        provider: { type: string, enum: [siws, google, x] }
+
+    AuthSession:
+      type: object
+      required: [token, user]
+      properties:
+        token: { type: string }
+        user: { $ref: "#/components/schemas/User" }
+
+    EligibilityTier:
+      type: object
+      required: [mcUsd, minTokens, holdCycles]
+      properties:
+        mcUsd: { type: integer, minimum: 0 }
+        minTokens: { type: integer, minimum: 0 }
+        holdCycles: { type: integer, minimum: 1 }
+
+    ProjectSettings:
+      type: object
+      properties:
+        cycleIntervalSec: { type: integer, minimum: 10 }
+        minHolderBalance: { type: integer, minimum: 0 }
+        maxHolderBalance: { type: integer, minimum: 0 }
+        minClaimSol: { type: number, minimum: 0 }
+        minReserveSol: { type: number, minimum: 0 }
+        slippageBps: { type: integer, minimum: 0, maximum: 10000 }
+        buybackPercent: { type: integer, minimum: 0, maximum: 100 }
+        eligibilityTiers:
+          type: array
+          items: { $ref: "#/components/schemas/EligibilityTier" }
+
+    Project:
+      type: object
+      required: [id, name, mint, mode, running, createdAt, updatedAt, settings]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        mint: { type: string }
+        symbol: { type: string, nullable: true }
+        mode: { type: string, enum: [LIVE] }
+        running: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        settings: { $ref: "#/components/schemas/ProjectSettings" }
+
+    StatsBucket:
+      type: object
+      properties:
+        cycles: { type: integer }
+        totalClaimedSol: { type: number }
+        totalBuybackSol: { type: number }
+        totalBoughtTokensUi: { type: number }
+        totalAirdropTokensUi: { type: number }
+        totalAirdropTokensMillions: { type: number }
+        airdropsCount: { type: integer }
+        uniqueHoldersPaidCount: { type: integer }
+        lastMarketCapUsd: { type: number, nullable: true }
+        lastPriceUsd: { type: number, nullable: true }
+        lastTierMcUsd: { type: integer, nullable: true }
+        lastTierMinTokens: { type: integer, nullable: true }
+        lastTierHoldCycles: { type: integer, nullable: true }
+        lastCycleAt: { type: string, format: date-time, nullable: true }
+        lastClaimAt: { type: string, format: date-time, nullable: true }
+        lastAirdropAt: { type: string, format: date-time, nullable: true }
+
+    ProjectStats:
+      type: object
+      required: [running, mode, stats]
+      properties:
+        running: { type: boolean }
+        mode: { type: string, enum: [LIVE] }
+        stats: { $ref: "#/components/schemas/StatsBucket" }
+
+    EventEntry:
+      type: object
+      required: [id, ts, kind, title, severity]
+      properties:
+        id: { type: integer }
+        ts: { type: string, format: date-time }
+        kind: { type: string }
+        title: { type: string }
+        detail: { type: string }
+        severity: { type: string, enum: [info, warn, error] }
+
+    MetricsKey:
+      type: object
+      required: [id, label, createdAt]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        createdAt: { type: string, format: date-time }
+        lastUsedAt: { type: string, format: date-time, nullable: true }
+
+    PreflightCheck:
+      type: object
+      required: [code, ok, required, severity, message]
+      properties:
+        code:
+          type: string
+          enum:
+            - dev_wallet_present
+            - mint_resolves
+            - dev_is_creator
+            - rpc_reachable
+            - balance_reserve
+            - runner_reachable
+            - mint_market
+            - balance_recommended
+        ok: { type: boolean }
+        required: { type: boolean }
+        severity: { type: string, enum: [ok, warn, error] }
+        message: { type: string }
+
+    PreflightResult:
+      type: object
+      required: [ok, ready, checks]
+      properties:
+        ok: { type: boolean }
+        ready: { type: boolean }
+        checks:
+          type: array
+          items: { $ref: "#/components/schemas/PreflightCheck" }
+
+    PublicEligibility:
+      type: object
+      required: [eligible, balance, tier, marketCapUsd]
+      properties:
+        eligible: { type: boolean }
+        reason:
+          type: string
+          enum: [below_floor, above_cap, hold_cycles, excluded, not_found]
+        balance: { type: number }
+        tier:
+          nullable: true
+          $ref: "#/components/schemas/EligibilityTier"
+        marketCapUsd: { type: number, nullable: true }
+
+    ShareCardCaption:
+      type: object
+      required: [caption, hashtags]
+      properties:
+        caption: { type: string }
+        hashtags:
+          type: array
+          items: { type: string }
+
+    ShareCardBundle:
+      allOf:
+        - $ref: "#/components/schemas/ShareCardCaption"
+        - type: object
+          required: [pngUrl]
+          properties:
+            pngUrl: { type: string, format: uri }
+
+    ApiError:
+      type: object
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            fields:
+              type: array
+              items: { type: string }
