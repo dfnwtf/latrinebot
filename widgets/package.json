@@ -1,0 +1,54 @@
+{
+  "name": "@latrinebot/widgets",
+  "version": "0.4.3",
+  "description": "Embeddable Latrine Bot widgets: live stats, holder list, status badge.",
+  "license": "MIT",
+  "author": "dfnwtf",
+  "homepage": "https://github.com/dfnwtf/latrinebot/tree/main/widgets",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dfnwtf/latrinebot.git",
+    "directory": "widgets"
+  },
+  "bugs": {
+    "url": "https://github.com/dfnwtf/latrinebot/issues"
+  },
+  "keywords": [
+    "latrine-bot",
+    "latrinebot",
+    "pumpfun",
+    "solana",
+    "widget",
+    "embed",
+    "obs"
+  ],
+  "type": "module",
+  "main": "./dist/embed.js",
+  "module": "./dist/embed.js",
+  "types": "./dist/embed.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/embed.d.ts",
+      "import": "./dist/embed.js"
+    },
+    "./themes": "./dist/themes.js"
+  },
+  "files": [
+    "dist",
+    "src",
+    "examples",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
