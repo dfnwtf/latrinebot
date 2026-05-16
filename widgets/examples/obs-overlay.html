@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Latrine Bot - OBS overlay</title>
+  <style>
+    html, body { margin: 0; padding: 0; background: transparent; }
+  </style>
+</head>
+<body>
+  <div id="overlay" style="width:360px;height:720px"></div>
+  <script type="module">
+    import { mountWidget } from "../dist/embed.js";
+    mountWidget({
+      widgetId: "YOUR_WIDGET_UUID",
+      target: "#overlay",
+      theme: "obs",
+      pollSec: 15,
+    });
+  </script>
+</body>
+</html>
