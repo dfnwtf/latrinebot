@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Latrine Bot widget - example</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 24px; background: #f4f0e6; color: #2b2118; }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    p { color: #6b5c4a; margin: 0 0 24px; }
+    .grid { display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); }
+    .card { background: #fff; border: 2px solid #2b2118; border-radius: 4px; padding: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Latrine Bot widget</h1>
+  <p>Replace <code>YOUR_WIDGET_UUID</code> with a real widget id from your dashboard.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Default mount</h2>
+      <div id="lb-w1"></div>
+    </div>
+    <div class="card">
+      <h2>OBS theme override</h2>
+      <div id="lb-w2"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { mountWidget } from "../dist/embed.js";
+
+    mountWidget({
+      widgetId: "YOUR_WIDGET_UUID",
+      target: "#lb-w1",
+      pollSec: 20,
+    });
+
+    mountWidget({
+      widgetId: "YOUR_WIDGET_UUID",
+      target: "#lb-w2",
+      theme: "obs",
+      pollSec: 15,
+    });
+  </script>
+</body>
+</html>
