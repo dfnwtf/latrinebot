@@ -27,7 +27,7 @@ export class LatrineError extends Error {
   readonly code: LatrineErrorCode | string;
   readonly fields?: string[];
   readonly retryAfterMs?: number;
-  readonly cause?: unknown;
+  override readonly cause?: unknown;
 
   constructor(status: number, payload: LatrineErrorPayload, cause?: unknown) {
     super(payload.message);

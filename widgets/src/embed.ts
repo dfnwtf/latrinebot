@@ -207,7 +207,8 @@ export function mountWidget(opts: MountOptions): WidgetController {
     root.style.width = `${c.w}px`;
     root.style.height = `${c.h}px`;
     const presetName = (opts.theme as ThemeName) ?? cfg.themePreset ?? "medieval";
-    const preset = THEME_PRESETS[presetName] ?? THEME_PRESETS.medieval;
+    const preset = THEME_PRESETS[presetName] ?? THEME_PRESETS["medieval"];
+    if (!preset) return;
     applyThemeVars(root, preset.theme, c.transparent ? { ...preset.canvas, transparent: true } : preset.canvas);
     root.style.setProperty("--lb-canvas-bg", c.transparent ? "transparent" : c.bg);
 
