@@ -59,7 +59,7 @@ Early bag is symbolic, later bag is a real ticket - both lock in conviction with
 
 ## Calculator
 
-A standalone calculator that does this math (and adds your own custom tiers) lives at [latrinebot-calculator](https://github.com/dfnwtf/latrinebot-calculator) and at [calculator.latrinebot.com](https://calculator.latrinebot.com).
+A standalone calculator that does this math (and adds your own custom tiers) lives at [latrinebot-calculator](https://github.com/dfnwtf/latrinebot-calculator) and at [latrinebot.com/calculator/](https://latrinebot.com/calculator/).
 
 ## Public eligibility lookup
 

@@ -6,7 +6,7 @@ A standalone, zero-dep calculator that does the same math the Latrine Bot engine
 
 > Part of the [`dfnwtf/latrinebot`](https://github.com/dfnwtf/latrinebot) monorepo.
 
-- **Live:** [calculator.latrinebot.com](https://calculator.latrinebot.com)
+- **Live:** [latrinebot.com/calculator/](https://latrinebot.com/calculator/)
 - **Source:** [`index.html`](./index.html) - single file, pure HTML + JS, no build step
 
 ## What it does
@@ -40,7 +40,7 @@ You can also query the production API for a live answer against any LIVE realm:
 The whole thing is a single static page. Drop it anywhere:
 
 ```html
-<iframe src="https://calculator.latrinebot.com/" width="100%" height="780" style="border:0"></iframe>
+<iframe src="https://latrinebot.com/calculator//" width="100%" height="780" style="border:0"></iframe>
 ```
 
 Or download [`index.html`](./index.html) and host it on your own domain.

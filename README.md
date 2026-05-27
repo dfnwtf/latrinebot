@@ -17,7 +17,7 @@ This is the public side of Latrine Bot. The engine, the runner, and the operator
 | [`docs/`](./docs) | Public product documentation (mirrors [latrinebot.com/docs](https://latrinebot.com/docs)) | - |
 | [`sdk/`](./sdk) | TypeScript client + OpenAPI 3.1 spec | [`@latrinebot/sdk`](https://www.npmjs.com/package/@latrinebot/sdk) |
 | [`widgets/`](./widgets) | Embeddable live widgets (iframe, script tag, programmatic) | [`@latrinebot/widgets`](https://www.npmjs.com/package/@latrinebot/widgets) |
-| [`calculator/`](./calculator) | Standalone eligibility calculator | hosted at [calculator.latrinebot.com](https://calculator.latrinebot.com) |
+| [`calculator/`](./calculator) | Standalone eligibility calculator | hosted at [latrinebot.com/calculator/](https://latrinebot.com/calculator/) |
 | [`cli/`](./cli) | Tiny CLI over the public API | [`@latrinebot/cli`](https://www.npmjs.com/package/@latrinebot/cli) |
 
 ## What the service does
