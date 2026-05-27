@@ -1,95 +1,157 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Latrine Bot eligibility calculator</title>
-  <meta name="description" content="Calculator for Latrine Bot eligibility tiers, anti-whale cap, hold cycles." />
-  <link rel="icon" href="data:," />
-  <link rel="stylesheet" href="./styles.css" />
+  <title>Eligibility calculator - Latrine Bot</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Calculator for Latrine Bot eligibility tiers, anti-whale cap, and hold cycles. Plug in a market cap, supply, and wallet balance to see where a wallet lands." />
+  <link rel="canonical" href="https://latrinebot.com/calculator/" />
+
+  <meta property="og:title" content="Eligibility calculator - Latrine Bot" />
+  <meta property="og:description" content="See where a wallet lands in the Latrine Bot eligibility tiers. Market cap, supply, balance, hold cycles - all live." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://latrinebot.com/calculator/" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Pirata+One&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://latrinebot.com/assets/medieval.css" />
+  <link rel="stylesheet" href="https://latrinebot.com/assets/medieval-docs.css" />
+  <link rel="stylesheet" href="https://latrinebot.com/assets/medieval-tools.css" />
+  <link rel="stylesheet" href="https://latrinebot.com/assets/medieval-calculator.css" />
 </head>
-<body>
-  <header class="hero">
-    <h1>Eligibility calculator</h1>
-    <p>
-      Plug in a market cap, supply, and wallet balance.
-      See exactly where the wallet lands in the
-      <a href="https://github.com/dfnwtf/latrinebot/blob/main/docs/eligibility.md">Latrine Bot eligibility tiers</a>.
-    </p>
+<body class="medieval medieval-docs">
+  <header class="medieval-header">
+    <div class="container inner">
+      <a href="https://latrinebot.com/" class="medieval-logo">
+        <img class="medieval-logo__mascot" src="https://latrinebot.com/assets/medieval/mas1.png" width="42" height="42" alt="" data-logo-blink decoding="async" />
+        <span class="medieval-logo__text">
+          <span class="medieval-logo__title">$LATRINE</span>
+          <span class="medieval-logo__sub">Medieval Airdrop</span>
+        </span>
+      </a>
+      <nav class="medieval-nav">
+        <a href="https://latrinebot.com/how-it-works.html">Quest log</a>
+        <a href="https://latrinebot.com/docs/eligibility.html">Tiers</a>
+        <a href="https://latrinebot.com/docs/index.html">Docs</a>
+        <a href="https://latrinebot.com/app/index.html" class="btn-med btn-med--gold">Open dashboard</a>
+      </nav>
+    </div>
   </header>
 
-  <main class="grid">
-    <section class="card">
-      <h2>Inputs</h2>
+  <main class="container tool-page doc-page doc-page--solo calc-page">
+    <article class="doc-main pixel-frame">
+      <h1>Eligibility calculator</h1>
+      <p class="doc-lead">
+        Plug in a market cap, a supply, and a wallet balance. See exactly where the wallet lands in the
+        <a href="https://latrinebot.com/docs/eligibility.html">Latrine Bot eligibility tiers</a>, with the anti-whale cap and hold-cycle floor applied.
+      </p>
 
-      <label>
-        Market cap (USD)
-        <input id="mc" type="number" min="0" step="1000" value="250000" />
-      </label>
+      <section class="calc-section">
+        <h2 class="calc-section__title">Inputs</h2>
 
-      <label>
-        Token supply
-        <input id="supply" type="number" min="1" step="1" value="1000000000" />
-        <small>Default is the fixed Pump.fun supply.</small>
-      </label>
+        <div class="calc-fields">
+          <div class="tool-field">
+            <label for="mc">Market cap (USD)</label>
+            <input id="mc" type="number" min="0" step="1000" value="250000" autocomplete="off" spellcheck="false" />
+          </div>
 
-      <label>
-        Wallet balance (tokens)
-        <input id="balance" type="number" min="0" step="1" value="500000" />
-      </label>
+          <div class="tool-field">
+            <label for="supply">Token supply</label>
+            <input id="supply" type="number" min="1" step="1" value="1000000000" autocomplete="off" spellcheck="false" />
+            <small>Default is the fixed Pump.fun supply.</small>
+          </div>
 
-      <label>
-        Anti-whale cap (tokens)
-        <input id="cap" type="number" min="0" step="1" value="20000000" />
-        <small>Set 0 to disable. Default 20 M = 2 % of 1 B.</small>
-      </label>
+          <div class="tool-field">
+            <label for="balance">Wallet balance (tokens)</label>
+            <input id="balance" type="number" min="0" step="1" value="500000" autocomplete="off" spellcheck="false" />
+          </div>
 
-      <label>
-        Cycles already held
-        <input id="held" type="number" min="0" step="1" value="0" />
-        <small>How long has the wallet been in the eligible band, in cycles.</small>
-      </label>
+          <div class="tool-field">
+            <label for="cap">Anti-whale cap (tokens)</label>
+            <input id="cap" type="number" min="0" step="1" value="20000000" autocomplete="off" spellcheck="false" />
+            <small>Set 0 to disable. Default 20M = 2% of 1B.</small>
+          </div>
 
-      <details>
-        <summary>Custom tier table (JSON)</summary>
-        <textarea id="tiers" rows="14" spellcheck="false"></textarea>
-        <div class="row">
-          <button type="button" id="resetTiers">Reset to defaults</button>
-          <button type="button" id="prettyTiers">Pretty print</button>
+          <div class="tool-field">
+            <label for="held">Cycles already held</label>
+            <input id="held" type="number" min="0" step="1" value="0" autocomplete="off" spellcheck="false" />
+            <small>How long the wallet has been in the eligible band.</small>
+          </div>
         </div>
-      </details>
-    </section>
 
-    <section class="card">
-      <h2>Result</h2>
-      <div id="result" class="result"></div>
+        <details class="calc-tier-editor">
+          <summary>Custom tier table (JSON)</summary>
+          <textarea id="tiers" spellcheck="false"></textarea>
+          <div class="calc-actions">
+            <button type="button" class="btn-med btn-med--stone" id="resetTiers">Reset defaults</button>
+            <button type="button" class="btn-med btn-med--stone" id="prettyTiers">Pretty print</button>
+          </div>
+        </details>
+      </section>
 
-      <h3>Active tier</h3>
-      <table id="activeTier">
-        <thead>
-          <tr><th>MC USD</th><th>Min tokens</th><th>Hold cycles</th><th>Min position (USD)</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <section class="calc-section">
+        <h2 class="calc-section__title">Result</h2>
+        <pre id="result" class="calc-result"></pre>
+      </section>
 
-      <h3>Full tier table</h3>
-      <table id="allTiers">
-        <thead>
-          <tr><th>MC USD</th><th>Min tokens</th><th>Hold cycles</th><th>Min USD</th><th>Active</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
+      <section class="calc-section">
+        <h2 class="calc-section__title">Active tier</h2>
+        <div class="calc-table-wrap">
+          <table id="activeTier" class="calc-table">
+            <thead>
+              <tr>
+                <th>MC USD</th>
+                <th>Min tokens</th>
+                <th>Hold cycles</th>
+                <th>Min position (USD)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="calc-section">
+        <h2 class="calc-section__title">Full tier table</h2>
+        <div class="calc-table-wrap">
+          <table id="allTiers" class="calc-table">
+            <thead>
+              <tr>
+                <th>MC USD</th>
+                <th>Min tokens</th>
+                <th>Hold cycles</th>
+                <th>Min USD</th>
+                <th>Active</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <p class="calc-footnote">
+          Same math as the engine. Source on
+          <a href="https://github.com/dfnwtf/latrinebot/tree/main/calculator">GitHub</a>,
+          tier docs in the
+          <a href="https://latrinebot.com/docs/eligibility.html">eligibility reference</a>.
+        </p>
+      </section>
+    </article>
   </main>
 
-  <footer>
-    Source: <a href="https://github.com/dfnwtf/latrinebot/tree/main/calculator">github.com/dfnwtf/latrinebot</a>
-    -
-    <a href="https://latrinebot.com">latrinebot.com</a>
-    -
-    <a href="https://github.com/dfnwtf/latrinebot/tree/main/docs">docs</a>
+  <footer class="medieval-footer">
+    <div class="container inner">
+      <span class="medieval-footer__brand">Medieval Airdrop - Latrine Bot</span>
+      <nav>
+        <a href="https://latrinebot.com/docs/index.html">Documentation</a>
+        <a href="https://latrinebot.com/docs/eligibility.html">Eligibility</a>
+        <a href="https://latrinebot.com/app/index.html">Dashboard</a>
+        <a href="https://github.com/dfnwtf/latrinebot">GitHub</a>
+      </nav>
+    </div>
   </footer>
 
   <script src="./app.js" type="module"></script>
+  <script src="https://latrinebot.com/logo-blink.js" defer></script>
 </body>
 </html>

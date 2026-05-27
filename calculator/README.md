@@ -7,47 +7,33 @@ A standalone, zero-dep calculator that does the same math the Latrine Bot engine
 > Part of the [`dfnwtf/latrinebot`](https://github.com/dfnwtf/latrinebot) monorepo.
 
 - **Live:** [latrinebot.com/calculator/](https://latrinebot.com/calculator/)
-- **Source:** [`index.html`](./index.html) - single file, pure HTML + JS, no build step
+- **Source:** [`index.html`](./index.html) + [`app.js`](./app.js) - no build step, no framework, no runtime deps
 
 ## What it does
 
-Plug in:
+Given a market cap, a token supply, a wallet balance, the anti-whale cap, and how many cycles a wallet has been in the eligible band, it tells you whether that wallet would be paid in the next cycle, and what the minimum position USD looks like at every tier.
 
-- A market cap (USD)
-- A token supply (defaults to 1 B - the fixed Pump.fun supply)
-- A wallet balance in tokens
+This is the same math the bot runs on every cycle. The only difference: the bot reads holders from chain and runs the resolver for every wallet; this page runs it for one wallet at a time, on inputs you choose.
 
-The calculator returns:
+## How the math works
 
-- The active tier from the default table (or your custom table)
-- Whether the balance clears the floor
-- Whether the balance is above the anti-whale cap
-- USD value of the position at the current MC
-- How many more cycles the wallet needs to "hold cycles" pass
+```
+1. Resolve the active tier:
+   pick the highest row in the tier table where mcUsd <= current MC
 
-You can also query the production API for a live answer against any LIVE realm:
+2. Apply the floor:
+   wallet balance must be >= active tier.minTokens
 
-> _Public eligibility lookup uses the same tier table the live bot uses for that project. No auth, no wallet signature, no key material._
+3. Apply the anti-whale cap:
+   wallet balance must be <= maxHolderBalance
+   (skipped when cap is set to 0)
 
-## Why it exists
-
-- Decide what tiers make sense for your token **before** you launch.
-- Show holders why they did or did not get a drop last cycle, without giving them dashboard access.
-- Embed the math in your own page (the file is self-contained).
-
-## Embed
-
-The whole thing is a single static page. Drop it anywhere:
-
-```html
-<iframe src="https://latrinebot.com/calculator//" width="100%" height="780" style="border:0"></iframe>
+4. Apply hold-cycles:
+   wallet must have been in the eligible band
+   for >= active tier.holdCycles consecutive cycles
 ```
 
-Or download [`index.html`](./index.html) and host it on your own domain.
-
-## Default tier table
-
-The default table is built into the page. If you customize tiers in your dashboard, paste your JSON into the **Custom tiers** field and the page will recompute.
+All four checks must pass. Edit the `Custom tier table (JSON)` section to plug in your own values.
 
 ## Run locally
 
@@ -58,7 +44,7 @@ python -m http.server 8080
 # open http://localhost:8080
 ```
 
-That is the whole build.
+The page pulls its medieval-themed CSS from `latrinebot.com` so it looks the same as the live version when you open it locally. If you serve this offline and need standalone styles, inline the contents of `latrinebot.com/assets/medieval.css`, `medieval-docs.css`, `medieval-tools.css`, and `medieval-calculator.css` into the page or fork it with your own CSS.
 
 ## License
 

@@ -94,11 +94,9 @@ function compute() {
   }
 
   const result = $("result");
-  result.className = `result ${status}`;
+  result.className = `calc-result ${status === "ok" ? "is-ok" : "is-bad"}`;
   result.textContent = status === "ok"
     ? [
-        "ELIGIBLE",
-        "",
         `Balance:           ${fmtTokens(balance)} tokens`,
         `Position value:    $${fmtUsd(positionUsd)}`,
         `Active tier:       MC >= $${fmtUsd(active?.mcUsd ?? 0)}`,
@@ -106,8 +104,6 @@ function compute() {
         `Hold cycles:       ${held} / ${active?.holdCycles ?? "-"}`,
       ].join("\n")
     : [
-        "NOT ELIGIBLE",
-        "",
         ...reasons.map((r) => `- ${r}`),
         "",
         `Position value:    $${fmtUsd(positionUsd)}`,
