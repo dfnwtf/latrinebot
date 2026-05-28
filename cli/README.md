@@ -15,15 +15,55 @@ npx @latrinebot/cli status <project-id>
 
 ## Configuration
 
-Set credentials via environment variables (recommended) or `~/.latrine/config.json`.
+### What you need
 
-| Env var | Purpose |
-|---|---|
-| `LATRINE_METRICS_KEY` | Read-only metrics key (`lb_live_...`). For `status`, `stats`, `events`, `watch`. |
-| `LATRINE_TOKEN` | Session JWT. For `preflight`, `projects`, `start`, `stop` etc. |
-| `LATRINE_API` | Override the API base. Default `https://api.latrinebot.com`. |
+| Credential | Used by | Where to get it |
+|---|---|---|
+| **Project ID** (UUID) | every command | the dashboard URL `?project=<id>` or `latrine projects list` once authenticated |
+| **Metrics key** (`lb_live_...`) | read-only commands (`status`, `stats`, `events`, `watch`) | dashboard → **API** tab → **Generate metrics key**. Shown once. |
+| **Session JWT** | write commands (`start`, `stop`, `preflight`, `run-once`, `projects`, `keys`) | Sign in at [latrinebot.com/app](https://latrinebot.com/app), then copy the session token from DevTools |
 
-You can also pass `--metrics-key`, `--token`, `--api` per command.
+The eligibility check (`latrine eligibility <id> <wallet>`) is **public** and needs neither.
+
+### How to pass them
+
+In order of precedence the CLI reads: command flag, env var, then `~/.latrine/config.json`.
+
+**Flags (one-off):**
+```bash
+latrine status <project-id> --metrics-key lb_live_xxxxxxxx
+latrine start  <project-id> --token eyJhbGciOi...
+```
+
+**Env vars (per shell session):**
+```bash
+export LATRINE_METRICS_KEY=lb_live_xxxxxxxx
+export LATRINE_TOKEN=eyJhbGciOi...
+export LATRINE_API=https://api.latrinebot.com   # optional override
+```
+
+**Config file (permanent, recommended for personal use):**
+```bash
+mkdir -p ~/.latrine
+cat > ~/.latrine/config.json <<EOF
+{
+  "metricsKey": "lb_live_xxxxxxxx",
+  "token":      "eyJhbGciOi..."
+}
+EOF
+chmod 600 ~/.latrine/config.json
+```
+
+PowerShell equivalent:
+```powershell
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.latrine" | Out-Null
+'{"metricsKey":"lb_live_xxxxxxxx","token":"eyJhbGciOi..."}' |
+  Set-Content "$env:USERPROFILE\.latrine\config.json"
+```
+
+### Why even reads need a key
+
+Latrine Bot treats per-project metrics (cycle counts, holders snapshot, last-event payloads) as **operator-private**, not public. They are read-only data, but only the project owner should see them. Truly public data (eligibility check, share card, widget snapshots) is on the `client.public.*` surface and needs no credentials.
 
 ## Commands
 
