@@ -22,6 +22,7 @@ Nothing runs on your machine. You connect a wallet, configure rules in a dashboa
 - [Metrics API](./metrics-api.md) - read-only stats and event feed (for widgets, OBS overlays, dashboards)
 - [Widgets](./widgets.md) - drop-in embeds for your token page
 - [Eligibility](./eligibility.md) - tier math, hold cycles, anti-whale cap
+- [Developers](./developers.md) - SDK, OpenAPI spec, CLI, npm widgets, calculator, GitHub
 
 ## Operations
 
@@ -32,8 +33,8 @@ Nothing runs on your machine. You connect a wallet, configure rules in a dashboa
 - Site: [latrinebot.com](https://latrinebot.com)
 - Dashboard: [latrinebot.com/app](https://latrinebot.com/app)
 - API: `api.latrinebot.com`
-- OpenAPI + SDK: [latrinebot-sdk](https://github.com/dfnwtf/latrinebot-sdk)
-- Embeds: [latrinebot-widgets](https://github.com/dfnwtf/latrinebot-widgets)
-- Calculator: [latrinebot-calculator](https://github.com/dfnwtf/latrinebot-calculator)
-- CLI: [latrinebot-cli](https://github.com/dfnwtf/latrinebot-cli)
-- Service changelog: [latrinebot-changelog](https://github.com/dfnwtf/latrinebot-changelog)
+- Public repo: [github.com/dfnwtf/latrinebot](https://github.com/dfnwtf/latrinebot)
+- npm: [`@latrinebot/sdk`](https://www.npmjs.com/package/@latrinebot/sdk), [`@latrinebot/widgets`](https://www.npmjs.com/package/@latrinebot/widgets), [`@latrinebot/cli`](https://www.npmjs.com/package/@latrinebot/cli)
+- OpenAPI 3.1 spec: [`sdk/openapi.yaml`](https://github.com/dfnwtf/latrinebot/blob/main/sdk/openapi.yaml)
+- Calculator: [latrinebot.com/calculator/](https://latrinebot.com/calculator/) (source: [`calculator/`](https://github.com/dfnwtf/latrinebot/tree/main/calculator))
+- Service changelog: [`CHANGELOG.md`](../CHANGELOG.md)
