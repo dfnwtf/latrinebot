@@ -1,6 +1,6 @@
 {
   "name": "latrinebot-monorepo",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "Public Latrine Bot monorepo: docs, SDK, widgets, calculator, CLI.",
   "license": "SEE LICENSE IN LICENSE",
   "private": true,

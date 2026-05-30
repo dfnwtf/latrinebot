@@ -61,6 +61,8 @@ Three flavours:
 | DELETE | `/api/projects/:id` | Bearer | Delete project |
 | POST | `/api/projects/:id/tiers/reset-default` | Bearer | Reset tier table to defaults |
 
+`PATCH .../settings` accepts `rewardAsset` (`{ kind: "SAME" | "SOL" | "USDC" | "CUSTOM", mint }`) to choose what holders receive; `mint` is required only for `CUSTOM`. Invalid input degrades to `SAME`. The last drop's ticker is exposed as `stats.lastRewardSymbol`. Full field reference: [configuration](./configuration.md#reward-asset-what-holders-receive).
+
 ### Credentials
 
 | Method | Path | Auth | Purpose |

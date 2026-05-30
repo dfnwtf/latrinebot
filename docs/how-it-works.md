@@ -15,9 +15,11 @@ Latrine Bot turns three on-chain actions into one continuous loop and runs them 
 ```
 
 1. **Claim.** The engine claims the creator fees that piled up on your Pump.fun token (or PumpSwap, if the token has graduated). The SOL lands in your dev wallet.
-2. **Buyback.** After reserving enough SOL to cover the next airdrop (transaction fees, token-account rents, plus a small buffer), the engine spends the rest of the claim on a market buy of your token.
-3. **Airdrop.** The bought tokens are split among eligible holders by their balance share. Whales above the cap and wallets that have not held long enough are excluded.
+2. **Acquire the reward.** After reserving enough SOL to cover the next airdrop (transaction fees, token-account rents, plus a small buffer), the engine turns the rest of the claim into the chosen [reward asset](./configuration.md#reward-asset-what-holders-receive): a market **buyback** of your token (default), a **Jupiter swap** to USDC or any SPL mint, or **nothing** when the reward is plain SOL.
+3. **Airdrop.** The reward is split among eligible holders by their balance share. SPL tokens go out as batched transfers; SOL rewards use native transfers. Whales above the cap and wallets that have not held long enough are excluded.
 4. **Wait.** The scheduler sleeps for the configured cycle interval, then starts over.
+
+Eligibility is always measured on your project token - holders qualify on what they hold, regardless of which asset the bot distributes.
 
 ## Where it runs
 
@@ -46,6 +48,7 @@ Before the first cycle runs, the dashboard runs a preflight that checks:
 - The mint exists on-chain (SPL or Token-2022) and matches a Pump.fun token.
 - The dev wallet is recognized as the creator (Pump.fun bonding curve creator, or vault, or PumpSwap creator-share wallet).
 - The dev wallet has enough SOL to cover one full cycle (reserve + claim fees + transfer fees).
+- For USDC / custom-token rewards: a Jupiter swap route exists for the reward mint (required). For SOL / project-token rewards this check is informational.
 - The runner is reachable.
 - Optional: market data is available (DexScreener listing). Non-blocking.
 - Optional: the wallet has a recommended balance (reserve + minimum claim). Non-blocking.

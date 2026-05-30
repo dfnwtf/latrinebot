@@ -25,8 +25,27 @@ Edit at `/app/projects/:id` -> **Settings**. Saved with `PATCH /api/projects/:id
 
 | Field | Type | Default | Notes |
 |---|---|---|---|
-| `buybackPercent` | int (0-100) | `100` | What percentage of the **claim minus reserve and airdrop costs** to spend on the buyback. |
-| `slippageBps` | int | `500` | Slippage tolerance in basis points (`500` = 5 %). Raise for low-liquidity PumpSwap pools. |
+| `buybackPercent` | int (0-100) | `100` | What percentage of the **claim minus reserve and airdrop costs** to spend acquiring the reward asset. |
+| `slippageBps` | int | `500` | Slippage tolerance in basis points (`500` = 5 %). Applies to buyback and Jupiter swaps. Raise for low-liquidity pools. |
+
+### Reward asset (what holders receive)
+
+Eligibility and holder snapshots are **always** computed against the project mint - holders must hold your token to qualify. Only the **distributed asset** is configurable, via `rewardAsset`.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `rewardAsset.kind` | `SAME` \| `SOL` \| `USDC` \| `CUSTOM` | `SAME` | `SAME`: buy & airdrop the project token (buyback). `SOL`: split claimed SOL directly (no swap, no ATA rent). `USDC`: swap SOL to USDC via Jupiter. `CUSTOM`: swap SOL to any SPL mint via Jupiter. |
+| `rewardAsset.mint` | string \| null | `null` | Base58 SPL mint to distribute. Required only for `CUSTOM` (must have a tradable Jupiter route). Ignored for other kinds. |
+
+Notes:
+
+- All reward kinds stay **self-financing**: gas, ATA rent, and (for USDC/custom) the Jupiter swap are paid from claimed creator fees before sizing the spend.
+- Logs and overlay show the reward token's own ticker (e.g. `$USDC` or your custom symbol), not the project ticker. The last drop's ticker is exposed as `stats.lastRewardSymbol`.
+- An invalid or routeless `rewardAsset` safely degrades to `SAME`, so existing projects keep working with no migration.
+
+```json
+{ "rewardAsset": { "kind": "CUSTOM", "mint": "REWARD_MINT_BASE58" } }
+```
 
 ### Eligibility
 
@@ -72,6 +91,7 @@ Manage them at `/app/projects/:id` -> **Metrics keys**. CRUD on `GET/POST /api/p
 | `balance_reserve` | yes | Dev wallet has at least `minReserveSol`. |
 | `runner_reachable` | yes | The Node runner responds to a health probe. |
 | `mint_market` | no | DexScreener has a listing for the mint. |
+| `reward_asset` | conditional | For `USDC`/`CUSTOM` rewards: **required** read-only Jupiter swap-route probe. For `SOL`/project-token rewards: informational. |
 | `balance_recommended` | no | Dev wallet has at least `minReserveSol + minClaimSol` (enough to also fund a first buyback). |
 
 `Required: yes` blocks Start. `Required: no` shows yellow and starts anyway.
@@ -87,6 +107,7 @@ Manage them at `/app/projects/:id` -> **Metrics keys**. CRUD on `GET/POST /api/p
   "minReserveSol": 0.05,
   "slippageBps": 500,
   "buybackPercent": 100,
+  "rewardAsset": { "kind": "SAME", "mint": null },
   "eligibilityTiers": [
     { "mcUsd":         0, "minTokens": 500000, "holdCycles": 5 },
     { "mcUsd":     50000, "minTokens": 450000, "holdCycles": 6 },

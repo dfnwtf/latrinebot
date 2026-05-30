@@ -10,6 +10,7 @@ export type PreflightCode =
   | "balance_reserve"
   | "runner_reachable"
   | "mint_market"
+  | "reward_asset"
   | "balance_recommended";
 
 export interface PreflightCheck {
@@ -32,6 +33,24 @@ export interface EligibilityTier {
   holdCycles: number;
 }
 
+/** What eligible holders receive each cycle. */
+export type RewardKind = "SAME" | "SOL" | "USDC" | "CUSTOM";
+
+/**
+ * Reward asset selection. Eligibility is always computed against the project
+ * mint; only the distributed asset changes. Unknown/invalid input degrades to
+ * `SAME` server-side.
+ */
+export interface RewardAsset {
+  /**
+   * `SAME` buys & airdrops the project token. `SOL` splits claimed SOL.
+   * `USDC` swaps SOL to USDC (Jupiter). `CUSTOM` swaps SOL to an arbitrary mint.
+   */
+  kind: RewardKind;
+  /** Base58 SPL mint, required only for `CUSTOM`; `null` otherwise. */
+  mint: string | null;
+}
+
 export interface ProjectSettings {
   cycleIntervalSec: number;
   minHolderBalance: number;
@@ -40,6 +59,8 @@ export interface ProjectSettings {
   minReserveSol: number;
   slippageBps: number;
   buybackPercent: number;
+  /** Reward asset selection. Defaults to `{ kind: "SAME", mint: null }`. */
+  rewardAsset: RewardAsset;
   eligibilityTiers: EligibilityTier[];
 }
 
@@ -65,8 +86,16 @@ export interface ProjectStats {
     totalBoughtTokensUi: number;
     totalAirdropTokensUi: number;
     totalAirdropTokensMillions: number;
+    /** Cumulative SOL airdropped when reward kind is SOL. */
+    totalAirdropSol: number;
     airdropsCount: number;
     uniqueHoldersPaidCount: number;
+    /** Reward kind used in the last airdrop cycle. */
+    lastRewardKind: RewardKind | null;
+    /** Reward mint used last cycle (null for SOL). */
+    lastRewardMint: string | null;
+    /** Ticker of the reward actually airdropped last cycle. */
+    lastRewardSymbol: string | null;
     lastMarketCapUsd: number | null;
     lastPriceUsd: number | null;
     lastTierMcUsd: number | null;
