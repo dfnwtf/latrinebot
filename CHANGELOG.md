@@ -4,6 +4,20 @@ All notable changes to the Latrine Bot service. Dates are production deploys to 
 
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/). This project follows semantic-ish versioning while pre-1.0 - see [README.md](./README.md).
 
+## [0.4.4] - 2026-05-29
+
+### Added
+- **Choosable reward asset.** `settings.rewardAsset` (`{ kind, mint }`) lets a project airdrop the project token (`SAME`, buyback), native `SOL`, `USDC`, or any `CUSTOM` SPL mint. USDC/custom rewards are acquired with a Jupiter swap from claimed fees; SOL is split directly. Eligibility is still computed on the project mint.
+- Preflight `reward_asset` check: read-only Jupiter swap-route probe (required for `USDC`/`CUSTOM`, informational for `SOL`/project token).
+- New stats fields: `lastRewardKind`, `lastRewardMint`, `lastRewardSymbol`, and `totalAirdropSol`. Logs and overlay now show the reward token's own ticker instead of the project ticker.
+
+### Changed
+- `buybackPercent` / `slippageBps` now describe acquiring the reward asset (buyback or Jupiter swap), not just the project-token buyback.
+- OpenAPI spec and `@latrinebot/sdk` types updated with `RewardAsset`, `rewardAsset` on `ProjectSettings`, reward stats, and the `reward_asset` preflight code.
+
+### Fixed
+- Custom-token airdrops logged the project ticker (e.g. `$BITCH`) instead of the reward token's ticker (e.g. `$CUM`); the public log and overlay now resolve and display the reward token's symbol.
+
 ## [0.4.3] - 2026-05-27
 
 ### Added

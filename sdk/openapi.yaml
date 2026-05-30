@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Latrine Bot API
-  version: 0.4.3
+  version: 0.4.4
   summary: Cloud automation engine for Pump.fun tokens.
   description: |
     Public HTTP API for [Latrine Bot](https://latrinebot.com). Covers authentication
@@ -67,7 +67,7 @@ paths:
                 type: object
                 properties:
                   name: { type: string, example: latrine-bot }
-                  version: { type: string, example: 0.4.3 }
+                  version: { type: string, example: 0.4.4 }
 
   /api/auth/challenge:
     get:
@@ -748,6 +748,29 @@ components:
         minTokens: { type: integer, minimum: 0 }
         holdCycles: { type: integer, minimum: 1 }
 
+    RewardAsset:
+      type: object
+      description: |
+        What eligible holders receive each cycle. Eligibility and holder
+        snapshots are always computed against the project mint; only the
+        distributed asset changes. Unknown or invalid input degrades to `SAME`.
+      required: [kind, mint]
+      properties:
+        kind:
+          type: string
+          enum: [SAME, SOL, USDC, CUSTOM]
+          default: SAME
+          description: |
+            `SAME` buys and airdrops the project token (buyback). `SOL` splits
+            claimed SOL directly. `USDC` swaps SOL to USDC via Jupiter. `CUSTOM`
+            swaps SOL to an arbitrary SPL mint via Jupiter.
+        mint:
+          type: string
+          nullable: true
+          description: |
+            Base58 SPL mint to distribute. Required only when `kind` is
+            `CUSTOM` (must have a tradable Jupiter route). `null` otherwise.
+
     ProjectSettings:
       type: object
       properties:
@@ -758,6 +781,7 @@ components:
         minReserveSol: { type: number, minimum: 0 }
         slippageBps: { type: integer, minimum: 0, maximum: 10000 }
         buybackPercent: { type: integer, minimum: 0, maximum: 100 }
+        rewardAsset: { $ref: "#/components/schemas/RewardAsset" }
         eligibilityTiers:
           type: array
           items: { $ref: "#/components/schemas/EligibilityTier" }
@@ -785,8 +809,16 @@ components:
         totalBoughtTokensUi: { type: number }
         totalAirdropTokensUi: { type: number }
         totalAirdropTokensMillions: { type: number }
+        totalAirdropSol: { type: number, description: "Cumulative SOL airdropped when reward kind is SOL." }
         airdropsCount: { type: integer }
         uniqueHoldersPaidCount: { type: integer }
+        lastRewardKind:
+          type: string
+          enum: [SAME, SOL, USDC, CUSTOM]
+          nullable: true
+          description: Reward kind used in the last airdrop cycle.
+        lastRewardMint: { type: string, nullable: true, description: "Reward mint used in the last cycle (null for SOL)." }
+        lastRewardSymbol: { type: string, nullable: true, description: "Ticker of the reward actually airdropped last cycle (e.g. SOL, USDC, or a custom symbol)." }
         lastMarketCapUsd: { type: number, nullable: true }
         lastPriceUsd: { type: number, nullable: true }
         lastTierMcUsd: { type: integer, nullable: true }
@@ -838,6 +870,7 @@ components:
             - balance_reserve
             - runner_reachable
             - mint_market
+            - reward_asset
             - balance_recommended
         ok: { type: boolean }
         required: { type: boolean }

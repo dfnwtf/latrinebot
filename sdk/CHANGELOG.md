@@ -2,7 +2,16 @@
 
 All notable changes to `@latrinebot/sdk`.
 
-## [0.4.3] - 2026-05-27
+## [0.4.4] - 2026-05-29
+
+### Added
+- `RewardAsset` interface and `RewardKind` union (`SAME` | `SOL` | `USDC` | `CUSTOM`), exported from the package root.
+- `ProjectSettings.rewardAsset` - choose what eligible holders receive each cycle.
+- Stats fields `lastRewardKind`, `lastRewardMint`, `lastRewardSymbol`, and `totalAirdropSol`.
+- `reward_asset` added to the `PreflightCode` union and the OpenAPI `PreflightCheck` enum.
+
+### Changed
+- OpenAPI spec bumped to `0.4.4` with the `RewardAsset` schema and reward stats.
 
 ### Added
 - `lifecycle.preflight(projectId)` returns the typed preflight check list (`ok`, `severity`, `required`, `code`, `message`).

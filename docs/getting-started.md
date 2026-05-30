@@ -39,11 +39,12 @@ Defaults are sane. The ones you usually want to touch:
 | `minClaimSol` | `0.005` | Raise it if you want to wait for bigger fee piles before each round. |
 | `minReserveSol` | `0.05` | Raise it if you have hundreds of eligible holders (more transfer + rent costs). |
 | `buybackPercent` | `100` | Lower if you want to leave more dev-wallet SOL between rounds. |
-| `slippageBps` | `500` (5 %) | Raise on illiquid PumpSwap pools. |
+| `slippageBps` | `500` (5 %) | Raise on illiquid pools; also applies to Jupiter swaps. |
+| `rewardAsset` | `{ "kind": "SAME" }` | Pick what holders receive: project token (buyback), `SOL`, `USDC`, or a `CUSTOM` mint (Jupiter swap). Holders still qualify on your token. |
 | `eligibilityTiers` | 13-row default | Tune floor / hold cycles per MC band. |
 | `maxHolderBalance` | `20 000 000` | Anti-whale cap. Set `0` to disable. |
 
-Full reference in [configuration](./configuration.md).
+Full reference in [configuration](./configuration.md#reward-asset-what-holders-receive).
 
 ## 5. Preflight
 
@@ -54,6 +55,7 @@ Click `Run preflight`. You will see a checklist:
 - Dev wallet is recognized as token creator - **required**
 - RPC reachable - **required**
 - Reserve balance covers one cycle (`minReserveSol`) - **required**
+- Reward asset has a Jupiter swap route - **required** for `USDC` / `CUSTOM`, informational otherwise
 - Runner is reachable - **required**
 - Market data available (DexScreener listing) - informational
 - Recommended balance (`minReserve + minClaim`) - informational
