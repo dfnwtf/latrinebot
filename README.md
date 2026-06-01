@@ -23,20 +23,27 @@ This is the public side of Latrine Bot. The engine, the runner, and the operator
 ## What the service does
 
 ```
-   +-----------+      +-----------+      +-----------+      +-----------+
-   |  CLAIM    | ---> |  BUYBACK  | ---> |   BURN    | ---> |  AIRDROP  |
-   +-----------+      +-----------+      +-----------+      +-----------+
-        ^                                                        |
-        |                                                        v
-        +------------------------- WAIT --------------------------+
-                         (cycle interval)
+   +-----------+      +-----------+
+   |  CLAIM    | ---> |  BUYBACK  |
+   +-----------+      +-----+-----+
+        ^                   |
+        |         +---------+---------+
+        |         |                   |
+        |         v                   v
+        |   +-----------+     +-----------+
+        |   |   BURN    |     |  AIRDROP  |
+        |   +-----------+     +-----------+
+        |         |                   |
+        |         +---------+---------+
+        |                   v
+        +-------------- WAIT ----------+
+                  (cycle interval)
 ```
 
 1. **Claim** creator fees from your Pump.fun (or PumpSwap) token.
 2. Reserve enough SOL for the next airdrop, then **acquire the reward** with the rest: buy back your token, swap to USDC / any SPL token via Jupiter, or keep plain SOL.
-3. Optionally **burn** a configured portion of the bought tokens (reduces supply).
-4. **Airdrop** the reward to eligible holders by their balance share.
-5. **Wait** and repeat.
+3. After buyback, **split the pool**: optionally **burn** a configured share (reduces supply) and **airdrop** the rest to eligible holders by balance share (per pool split settings).
+4. **Wait** and repeat.
 
 Eligibility is a **tiered floor** that gets easier as market cap grows, plus an **anti-whale cap**, plus a **hold-cycles** anti-sybil filter. Holders always qualify on the project token; the distributed asset is configurable (project token, SOL, USDC, or any SPL mint). Details in [`docs/eligibility.md`](./docs/eligibility.md) and [`docs/configuration.md`](./docs/configuration.md#reward-asset-what-holders-receive).
 
