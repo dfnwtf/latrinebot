@@ -93,6 +93,7 @@ Issues and PRs welcome - read [`CONTRIBUTING.md`](./CONTRIBUTING.md) first. Styl
 - Site: [latrinebot.com](https://latrinebot.com)
 - App: [latrinebot.com/app](https://latrinebot.com/app)
 - API health: [api.latrinebot.com/api/health](https://api.latrinebot.com/api/health)
+- npm: [@latrinebot/sdk](https://www.npmjs.com/package/@latrinebot/sdk), [@latrinebot/widgets](https://www.npmjs.com/package/@latrinebot/widgets), [@latrinebot/cli](https://www.npmjs.com/package/@latrinebot/cli)
 - X: [@Latrine_bot](https://x.com/Latrine_bot)
 - Security: [`SECURITY.md`](./SECURITY.md) - latrine@atomicmail.io
 
