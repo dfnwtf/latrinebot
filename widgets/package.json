@@ -1,6 +1,6 @@
 {
   "name": "@latrinebot/widgets",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Embeddable Latrine Bot widgets: live stats, holder list, status badge.",
   "license": "MIT",
   "author": "dfnwtf",

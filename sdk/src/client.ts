@@ -54,7 +54,7 @@ export class LatrineClient {
     this.token = options.token;
     this.metricsKey = options.metricsKey;
     this.fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis);
-    this.userAgent = `latrinebot-sdk/0.4.4${options.userAgent ? ` ${options.userAgent}` : ""}`;
+    this.userAgent = `latrinebot-sdk/0.4.5${options.userAgent ? ` ${options.userAgent}` : ""}`;
   }
 
   /** Attach (or replace) the session Bearer token used by authenticated routes. */
