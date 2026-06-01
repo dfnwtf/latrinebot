@@ -394,7 +394,15 @@ paths:
           description: ok
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/StatsBucket" }
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  stats: { $ref: "#/components/schemas/StatsBucket" }
+                  publicStats: { $ref: "#/components/schemas/PublicStats" }
+                  simRuntime:
+                    type: object
+                    additionalProperties: true
 
   /api/projects/{id}/events:
     parameters: [{ $ref: "#/components/parameters/ProjectId" }]
@@ -828,6 +836,17 @@ components:
         lastClaimAt: { type: string, format: date-time, nullable: true }
         lastAirdropAt: { type: string, format: date-time, nullable: true }
 
+    PublicStats:
+      type: object
+      description: Public token-page style stats (6 tiles).
+      properties:
+        airdropsCount: { type: integer }
+        totalDistributedSol: { type: number }
+        uniqueHoldersPaid: { type: integer }
+        lastEligibleCount: { type: integer, nullable: true }
+        burnedDisplay: { type: string }
+        totalClaimedSol: { type: number }
+
     ProjectStats:
       type: object
       required: [running, mode, stats]
@@ -835,6 +854,7 @@ components:
         running: { type: boolean }
         mode: { type: string, enum: [LIVE] }
         stats: { $ref: "#/components/schemas/StatsBucket" }
+        publicStats: { $ref: "#/components/schemas/PublicStats" }
 
     EventEntry:
       type: object

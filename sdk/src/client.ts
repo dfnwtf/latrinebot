@@ -10,6 +10,7 @@ import type {
   PreflightResult,
   Project,
   ProjectStats,
+  ProjectStatsBucketResponse,
   ProvidersInfo,
   PublicEligibility,
   ShareCardBundle,
@@ -53,7 +54,7 @@ export class LatrineClient {
     this.token = options.token;
     this.metricsKey = options.metricsKey;
     this.fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis);
-    this.userAgent = `latrinebot-sdk/0.4.3${options.userAgent ? ` ${options.userAgent}` : ""}`;
+    this.userAgent = `latrinebot-sdk/0.4.4${options.userAgent ? ` ${options.userAgent}` : ""}`;
   }
 
   /** Attach (or replace) the session Bearer token used by authenticated routes. */
@@ -304,7 +305,7 @@ export class LatrineClient {
     status: (id: string): Promise<ProjectStats> =>
       this.request({ path: `/api/projects/${id}/status`, auth: "bearer" }),
 
-    stats: (id: string): Promise<ProjectStats["stats"]> =>
+    stats: (id: string): Promise<ProjectStatsBucketResponse> =>
       this.request({ path: `/api/projects/${id}/stats`, auth: "bearer" }),
 
     events: (
