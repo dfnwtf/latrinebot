@@ -22,19 +22,7 @@ This is the public side of Latrine Bot. The engine, the runner, and the operator
 
 ## What the service does
 
-```
-
-                                                      +---------------> +-----------+ -----+
-                                                      |                 |   BURN    |       |
-                                                      |                 +-----------+       |
-   +-----------+                    +-----------+     |                                       |
-   |  CLAIM    |       --->         |  BUYBACK  | ----+                                       |
-   +-----------+                    +-----------+     |              +-----------+          |
-        ^                                                  +------------>|  AIRDROP  |          |
-        |                                                                +-----------+          |
-        |                                                                                         |
-        +------------------------------------------ (cycle interval) ------------------------------+
-```
+![Latrine Bot service flow: claim, buyback, burn, airdrop, cycle interval](./docs/assets/service-flow.png)
 
 1. **Claim** creator fees from your Pump.fun (or PumpSwap) token.
 2. Reserve enough SOL for the next airdrop, then **acquire the reward** with the rest: buy back your token, swap to USDC / any SPL token via Jupiter, or keep plain SOL.
