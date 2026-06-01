@@ -16,6 +16,11 @@ All notable changes to `@latrinebot/sdk`.
 - `lifecycle.stats(projectId)` now returns an object `{ ok, stats, publicStats, simRuntime }` (previously typed as a raw stats bucket).
 - OpenAPI spec updated to include `PublicStats` and the new `/stats` response shape.
 
+## [0.4.5] - 2026-05-31
+
+### Fixed
+- Republish bump after npm version collision on `0.4.4`.
+
 ## [0.4.3] - 2026-05-27
 
 ### Added

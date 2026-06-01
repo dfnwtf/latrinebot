@@ -1,6 +1,6 @@
 {
   "name": "@latrinebot/cli",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "Tiny CLI over the Latrine Bot public API.",
   "license": "MIT",
   "author": "dfnwtf",
@@ -39,7 +39,7 @@
     "lint": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@latrinebot/sdk": "^0.4.4"
+    "@latrinebot/sdk": "^0.4.5"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

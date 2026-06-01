@@ -12,6 +12,11 @@ All notable changes to `@latrinebot/widgets`.
 - Ticker block now prefers `settings.tokenSymbol` when present.
 - Event blocks tolerate both `{ tag, body, at }` and legacy `{ kind, title, detail, ts }` shapes.
 
+## [0.4.5] - 2026-05-31
+
+### Fixed
+- Republish bump to keep versions aligned with `@latrinebot/sdk`.
+
 ## [0.4.3] - 2026-05-27
 
 ### Added

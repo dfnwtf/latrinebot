@@ -7,6 +7,11 @@ All notable changes to `@latrinebot/cli`.
 ### Changed
 - Updated to `@latrinebot/sdk@^0.4.4` for `publicStats` support and the corrected `lifecycle.stats` response shape.
 
+## [0.4.5] - 2026-05-31
+
+### Changed
+- Updated to `@latrinebot/sdk@^0.4.5`.
+
 ## [0.4.3] - 2026-05-27
 
 ### Added
