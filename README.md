@@ -35,6 +35,7 @@ Eligibility is a **tiered floor** that gets easier as market cap grows, plus an 
 
 - Dashboard: [latrinebot.com/app](https://latrinebot.com/app)
 - 5-minute walkthrough: [`docs/getting-started.md`](./docs/getting-started.md)
+- Developer quick start (SDK, widgets, CLI): [`docs/developers.md`](./docs/developers.md)
 - Settings reference: [`docs/configuration.md`](./docs/configuration.md)
 - API reference: [`docs/api-reference.md`](./docs/api-reference.md)
 
