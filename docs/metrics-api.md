@@ -2,6 +2,13 @@
 
 Read-only stats and events for one project. Designed for widgets, OBS overlays, dashboards, and other read-only integrations that should not have full project credentials.
 
+If you want the same 6 tiles shown on token pages (Airdrops sent, To holders (SOL est.), Holders paid, Eligible now, Tokens burned, Creator fees claimed), use:
+
+- `/api/public/realm/<PROJECT_ID>/live` (per-token public stats)
+- `/api/public/widgets/<WIDGET_ID>/live` (widget live payload)
+
+Those endpoints do not require a metrics key and return derived `publicStats`.
+
 ## Authentication
 
 A metrics key is a per-project read-only token. It is created in the dashboard under **Metrics keys** and looks like:
