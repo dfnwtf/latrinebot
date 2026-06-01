@@ -26,7 +26,7 @@ Or as a script tag (if you prefer the widget to flow with your DOM):
 ></script>
 ```
 
-Source for the embed library lives in [`latrinebot-widgets`](https://github.com/dfnwtf/latrinebot-widgets).
+Source for the embed library lives in [`widgets/`](../widgets) and ships as [`@latrinebot/widgets`](https://www.npmjs.com/package/@latrinebot/widgets).
 
 ## Building your widget
 
@@ -44,14 +44,12 @@ Source for the embed library lives in [`latrinebot-widgets`](https://github.com/
 | Token ticker | Symbol + short mint |
 | Custom text | Free text, useful for labels |
 | Divider | Horizontal rule |
-| Stat - Creator fees (SOL) | Total claimed across all cycles |
+| Stat - Airdrops sent | Total LIVE airdrops sent |
+| Stat - To holders (SOL est.) | Estimated SOL distributed to holders (accounting estimate, not a sum of transfers) |
 | Stat - Holders paid | Unique wallets ever paid |
-| Stat - Airdrops sent | Total airdrop transactions |
-| Stat - Market cap | Last known DexScreener MC |
-| Stat - Cycles | Total cycles run |
-| Stat - Tier floor (tokens) | Current active tier's `minTokens` |
-| Stat - Hold cycles | Current active tier's `holdCycles` |
-| Stat - Airdropped (M tokens) | Total airdropped in millions |
+| Stat - Eligible now | Eligible holders in the most recent snapshot |
+| Stat - Tokens burned | Human readable burned total (includes ticker when available) |
+| Stat - Creator fees claimed | Total SOL claimed across LIVE cycles |
 | Last event | The most recent log line |
 | Event log | Scrolling log (1-30 lines) |
 
@@ -65,6 +63,8 @@ GET /api/public/widgets/{widgetId}/live     # stats + event tail (cached 5s, 120
 ```
 
 No auth. No CORS surprises. Safe to embed on any third-party site.
+
+`/live` returns both raw `stats` and derived `publicStats`. Widget runtimes prefer `publicStats` when present.
 
 ## Themes and tokens
 
@@ -80,7 +80,7 @@ Widget themes are exposed as CSS variables on the embed root, so you can overrid
 }
 ```
 
-For exact preset values see [`THEME_PRESETS`](https://github.com/dfnwtf/latrinebot-widgets/blob/main/src/themes.ts).
+For exact preset values see [`THEME_PRESETS`](../widgets/src/themes.ts).
 
 ## OBS / streaming
 

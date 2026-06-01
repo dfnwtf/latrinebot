@@ -25,6 +25,18 @@ try {
   console.log(`Holders paid:   ${snap.stats.uniqueHoldersPaidCount}`);
   console.log(`Last MC (USD):  ${snap.stats.lastMarketCapUsd ?? "-"}`);
 
+  const realm = await client.public.realm.live(projectId);
+  if (realm.publicStats) {
+    const ps = realm.publicStats;
+    console.log("\nToken page tiles (publicStats)");
+    console.log(`Airdrops sent:          ${ps.airdropsCount}`);
+    console.log(`To holders (SOL est.):  ${ps.totalDistributedSol.toFixed(3)}`);
+    console.log(`Holders paid:           ${ps.uniqueHoldersPaid}`);
+    console.log(`Eligible now:           ${ps.lastEligibleCount ?? "-"}`);
+    console.log(`Tokens burned:          ${ps.burnedDisplay}`);
+    console.log(`Creator fees claimed:   ${ps.totalClaimedSol.toFixed(3)}`);
+  }
+
   const { events } = await client.metrics.events(projectId, { limit: 10 });
   console.log(`\nLast ${events.length} events`);
   for (const ev of events) {
