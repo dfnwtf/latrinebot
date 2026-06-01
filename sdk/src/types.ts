@@ -76,35 +76,62 @@ export interface Project {
   settings: ProjectSettings;
 }
 
+/** Public token-page style stats (the 6 tiles shown on token pages and widgets). */
+export interface PublicStats {
+  airdropsCount: number;
+  totalDistributedSol: number;
+  uniqueHoldersPaid: number;
+  lastEligibleCount: number | null;
+  burnedDisplay: string;
+  totalClaimedSol: number;
+}
+
+export interface StatsBucket {
+  cycles: number;
+  totalClaimedSol: number;
+  totalBuybackSol: number;
+  totalBoughtTokensUi: number;
+  totalAirdropTokensUi: number;
+  totalAirdropTokensMillions: number;
+  /** Cumulative SOL airdropped when reward kind is SOL. */
+  totalAirdropSol?: number;
+  airdropsCount: number;
+  uniqueHoldersPaidCount: number;
+  /** Reward kind used in the last airdrop cycle. */
+  lastRewardKind?: RewardKind | null;
+  /** Reward mint used last cycle (null for SOL). */
+  lastRewardMint?: string | null;
+  /** Ticker of the reward actually airdropped last cycle. */
+  lastRewardSymbol?: string | null;
+  lastMarketCapUsd: number | null;
+  lastPriceUsd: number | null;
+  lastTierMcUsd: number | null;
+  lastTierMinTokens: number | null;
+  lastTierHoldCycles: number | null;
+  lastCycleAt: Iso | null;
+  lastClaimAt: Iso | null;
+  lastAirdropAt: Iso | null;
+}
+
 export interface ProjectStats {
+  ok?: boolean;
   running: boolean;
   mode: "LIVE";
-  stats: {
-    cycles: number;
-    totalClaimedSol: number;
-    totalBuybackSol: number;
-    totalBoughtTokensUi: number;
-    totalAirdropTokensUi: number;
-    totalAirdropTokensMillions: number;
-    /** Cumulative SOL airdropped when reward kind is SOL. */
-    totalAirdropSol: number;
-    airdropsCount: number;
-    uniqueHoldersPaidCount: number;
-    /** Reward kind used in the last airdrop cycle. */
-    lastRewardKind: RewardKind | null;
-    /** Reward mint used last cycle (null for SOL). */
-    lastRewardMint: string | null;
-    /** Ticker of the reward actually airdropped last cycle. */
-    lastRewardSymbol: string | null;
-    lastMarketCapUsd: number | null;
-    lastPriceUsd: number | null;
-    lastTierMcUsd: number | null;
-    lastTierMinTokens: number | null;
-    lastTierHoldCycles: number | null;
-    lastCycleAt: Iso | null;
-    lastClaimAt: Iso | null;
-    lastAirdropAt: Iso | null;
-  };
+  mint?: string | null;
+  hasSecrets?: boolean;
+  cycleBusy?: boolean;
+  credentials?: unknown;
+  stats: StatsBucket;
+  publicStats?: PublicStats;
+  simRuntime?: Record<string, unknown>;
+  runner?: unknown;
+}
+
+export interface ProjectStatsBucketResponse {
+  ok: boolean;
+  stats: StatsBucket;
+  publicStats?: PublicStats;
+  simRuntime?: Record<string, unknown>;
 }
 
 export type EventKind =
@@ -126,6 +153,10 @@ export interface EventEntry {
   title: string;
   detail?: string;
   severity: "info" | "warn" | "error";
+  /** Newer event format (tag/body). */
+  tag?: string;
+  body?: string;
+  at?: Iso;
 }
 
 export interface MetricsKey {

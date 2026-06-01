@@ -2,6 +2,16 @@
 
 All notable changes to `@latrinebot/widgets`.
 
+## [0.4.4] - 2026-05-31
+
+### Added
+- Support for `publicStats` payloads (token-page style stats) on widget live endpoints.
+- New stat fields: `totalDistributedSol`, `lastEligibleCount`, `burnedDisplay`.
+
+### Changed
+- Ticker block now prefers `settings.tokenSymbol` when present.
+- Event blocks tolerate both `{ tag, body, at }` and legacy `{ kind, title, detail, ts }` shapes.
+
 ## [0.4.3] - 2026-05-27
 
 ### Added

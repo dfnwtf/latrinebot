@@ -47,7 +47,9 @@ interface WidgetBlock {
 interface LiveStats {
   running?: boolean;
   mode?: string;
+  settings?: Record<string, unknown>;
   stats?: Record<string, number | string | null>;
+  publicStats?: Record<string, number | string | null>;
   events?: Array<{ ts: string; kind: string; title: string; detail?: string; severity: string }>;
 }
 
@@ -93,27 +95,31 @@ function fmtMc(n: number | string | null | undefined): string {
 }
 
 const STAT_RENDERERS: Record<string, (stats: NonNullable<LiveStats["stats"]>) => { label: string; value: string }> = {
-  totalClaimedSol: (s) => ({ label: "Creator fees", value: fmtSol(s.totalClaimedSol) }),
+  airdropsCount: (s) => ({ label: "Airdrops sent", value: fmtNum(s.airdropsCount) }),
+  totalDistributedSol: (s) => ({ label: "To holders (SOL est.)", value: fmtSol(s.totalDistributedSol) }),
+  uniqueHoldersPaid: (s) => ({ label: "Holders paid", value: fmtNum(s.uniqueHoldersPaid) }),
+  lastEligibleCount: (s) => ({ label: "Eligible now", value: fmtNum(s.lastEligibleCount) }),
+  burnedDisplay: (s) => ({ label: "Tokens burned", value: String(s.burnedDisplay ?? "-") }),
+  totalClaimedSol: (s) => ({ label: "Creator fees claimed", value: fmtSol(s.totalClaimedSol) }),
+
+  // Backward-compatible fields (older API payloads / saved widget configs)
   uniqueHoldersPaidCount: (s) => ({ label: "Holders paid", value: fmtNum(s.uniqueHoldersPaidCount) }),
-  airdropsCount: (s) => ({ label: "Airdrops", value: fmtNum(s.airdropsCount) }),
+  totalAirdropTokensMillions: (s) => ({ label: "Airdropped (M)", value: fmtNum(s.totalAirdropTokensMillions, { decimals: 2 }) }),
   lastMarketCapUsd: (s) => ({ label: "Market cap", value: fmtMc(s.lastMarketCapUsd) }),
   cycles: (s) => ({ label: "Cycles", value: fmtNum(s.cycles) }),
   lastTierMinTokens: (s) => ({ label: "Tier floor", value: fmtNum(s.lastTierMinTokens) }),
   lastTierHoldCycles: (s) => ({ label: "Hold cycles", value: fmtNum(s.lastTierHoldCycles) }),
-  totalAirdropTokensMillions: (s) => ({
-    label: "Airdropped (M)",
-    value: fmtNum(s.totalAirdropTokensMillions, { decimals: 2 }),
-  }),
 };
 
 function renderBlock(b: WidgetBlock, live: LiveStats): string {
-  const stats = live.stats ?? {};
+  const stats = (live.publicStats ?? live.stats ?? {}) as NonNullable<LiveStats["stats"]>;
   if (b.type === "status") {
     const running = !!live.running;
     return `<div class="lb-status ${running ? "ok" : "off"}">${running ? "RUNNING" : "STOPPED"}</div>`;
   }
   if (b.type === "ticker") {
-    const sym = (stats.symbol as string) ?? "$TOKEN";
+    const symRaw = String((live.settings as any)?.tokenSymbol ?? "");
+    const sym = symRaw ? (symRaw.startsWith("$") ? symRaw : "$" + symRaw) : "$TOKEN";
     return `<div class="lb-ticker">${sym}</div>`;
   }
   if (b.type === "label") {
@@ -129,15 +135,21 @@ function renderBlock(b: WidgetBlock, live: LiveStats): string {
     return `<div class="lb-stat"><div class="lb-stat-l">${label}</div><div class="lb-stat-v">${value}</div></div>`;
   }
   if (b.type === "lastEvent") {
-    const ev = live.events?.[0];
+    const ev: any = live.events?.[0];
     if (!ev) return `<div class="lb-event">no events yet</div>`;
-    return `<div class="lb-event"><span class="lb-ev-k">${ev.kind}</span> <span class="lb-ev-d">${ev.detail ?? ev.title}</span></div>`;
+    const k = ev.tag ?? ev.kind ?? "INFO";
+    const d = ev.body ?? ev.detail ?? ev.title ?? "";
+    return `<div class="lb-event"><span class="lb-ev-k">${k}</span> <span class="lb-ev-d">${d}</span></div>`;
   }
   if (b.type === "eventLog") {
-    const events = (live.events ?? []).slice(0, b.limit ?? 8);
+    const events = (live.events ?? []).slice(0, b.limit ?? 8) as any[];
     if (!events.length) return `<div class="lb-log">no events yet</div>`;
     return `<ul class="lb-log">${events
-      .map((e) => `<li><span class="lb-ev-k">${e.kind}</span> <span class="lb-ev-d">${e.detail ?? e.title}</span></li>`)
+      .map((e) => {
+        const k = e.tag ?? e.kind ?? "INFO";
+        const d = e.body ?? e.detail ?? e.title ?? "";
+        return `<li><span class="lb-ev-k">${k}</span> <span class="lb-ev-d">${d}</span></li>`;
+      })
       .join("")}</ul>`;
   }
   return "";
