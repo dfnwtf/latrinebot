@@ -1,6 +1,6 @@
 # Latrine Bot
 
-Cloud automation engine for Pump.fun tokens. Claim creator fees, buy the token back, drop the proceeds to holders by tier rules. No CLI, no local node, no scripts to maintain.
+Cloud automation engine for Pump.fun tokens. Claim creator fees, buy back, optionally burn supply, and airdrop to eligible holders by tier rules. No CLI, no local node, no scripts to maintain.
 
 [![Site](https://img.shields.io/badge/site-latrinebot.com-c45c00?style=flat-square)](https://latrinebot.com)
 [![App](https://img.shields.io/badge/app-dashboard-2b2118?style=flat-square)](https://latrinebot.com/app)
@@ -72,7 +72,7 @@ npx @latrinebot/cli preflight YOUR_PROJECT_ID
 
 These stay private by design:
 
-- The on-chain engine: claim, buyback, snapshot, distribute, hold-history, retry / fee strategy
+- The on-chain engine: claim, buyback, burn, snapshot, distribute, hold-history, retry / fee strategy
 - The runner that signs and sends mainnet transactions
 - The operator panel and its admin endpoints
 - Anti-MEV / RPC strategy code
