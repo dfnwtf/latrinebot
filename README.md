@@ -23,16 +23,16 @@ This is the public side of Latrine Bot. The engine, the runner, and the operator
 ## What the service does
 
 ```
-   +-----------+      +-----------+                    +-----------+
-   |  CLAIM    | ---> |  BUYBACK  | -----------------> |   BURN    |
-   +-----------+      +-----+-----+                    +-----------+
-        ^                    \
-        |                     \
-        |                      \    +-----------+
-        |                       +-> |  AIRDROP  |
-        |                           +-----------+
-        |
-        +--------------------- (cycle interval) ------------------
+                                      +---> |   BURN    | --+
+                                      |     +-----------+   |
+   +-----------+      +-----------+   |                     |
+   |  CLAIM    | ---> |  BUYBACK  | --+                     |
+   +-----------+      +-----------+   |                     |
+        ^                             |     +-----------+   |
+        |                             +---> |  AIRDROP  | --+
+        |                                   +-----------+   |
+        |                                                   |
+        +-----------------(cycle interval)------------------+
 ```
 
 1. **Claim** creator fees from your Pump.fun (or PumpSwap) token.
