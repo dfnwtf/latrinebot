@@ -130,7 +130,19 @@ See [metrics API](./metrics-api.md) for full payload shapes.
 | GET | `/api/public/realm/:id/live` | Per-token public LIVE stats (LIVE-mode realms only) |
 | GET/POST | `/api/public/realm/:id/check-eligibility` | Public eligibility lookup (`?wallet=` or JSON body) |
 | GET | `/api/public/realm/:id/share-card/bundle` | Per-token public share card |
+| GET | `/api/public/realm/:id/reward-options` | Holder perk: enabled + SAME/SOL/USDC options + dev default |
+| GET | `/api/public/realm/:id/reward-preference?wallet=` | Saved holder reward kind or `null` |
+| POST | `/api/public/realm/:id/reward-preference` | Save holder reward kind (SIWS: wallet, message, nonce, signature, kind) |
+| GET | `/api/public/realm/:id/social-claim` | X post boost: enabled + suggested post template |
+| POST | `/api/public/realm/:id/social-claim` | Claim boost (`{ tweetUrl, wallet }`) - 1h window (default), one URL per token forever, one wallet per claim, no SIWS |
+| GET | `/api/public/latrine/live` | Homepage showcase ledger |
+| GET | `/api/public/latrine/reward-options` | Showcase holder perk (KV snapshot) |
+| GET/POST | `/api/public/latrine/reward-preference` | Showcase holder prefs (KV) |
+| GET/POST | `/api/public/latrine/social-claim` | Showcase social boost (bound project D1) |
+| GET/POST | `/api/public/latrine/check-eligibility` | Showcase eligibility (KV snapshot) |
 | GET | `/api/public/ward-roll` | Ward-roll realm listing (`?faces=1` for hero faces) |
+
+Holder perks behaviour and settings: [configuration](./configuration.md#holder-reward-choice), [eligibility](./eligibility.md). Payload examples: web docs `/docs/api-reference.html#holder-perks`.
 
 ## Rate limits
 

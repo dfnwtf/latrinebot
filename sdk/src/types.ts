@@ -61,6 +61,16 @@ export interface ProjectSettings {
   buybackPercent: number;
   /** Reward asset selection. Defaults to `{ kind: "SAME", mint: null }`. */
   rewardAsset: RewardAsset;
+  /** Holder reward currency choice on the public token page. */
+  holderRewardChoiceEnabled?: boolean;
+  /** X post drop boost on the public token page. */
+  socialClaimEnabled?: boolean;
+  /** Minutes a claimed boost stays active (default 60). */
+  socialBoostDurationMin?: number;
+  /** Weight multiplier for eligible holders with an active boost (default 1.15). */
+  socialHolderBoostMultiplier?: number;
+  /** Virtual weight ratio x tier minTokens for non-holder intro drops (default 0.08). */
+  socialNonHolderWeightRatio?: number;
   eligibilityTiers: EligibilityTier[];
 }
 
@@ -223,4 +233,49 @@ export interface ShareCardCaption {
 
 export interface ShareCardBundle extends ShareCardCaption {
   pngUrl: string;
+}
+
+export interface RewardOptionsResponse {
+  ok: boolean;
+  enabled: boolean;
+  options: Array<Exclude<RewardKind, "CUSTOM">>;
+  defaultKind?: Exclude<RewardKind, "CUSTOM">;
+  defaultRewardKind?: Exclude<RewardKind, "CUSTOM">;
+  defaultRewardLabel?: string;
+  rewardMint?: string | null;
+  ticker?: string;
+}
+
+export interface RewardPreferenceResponse {
+  ok: boolean;
+  kind?: Exclude<RewardKind, "CUSTOM"> | null;
+}
+
+export interface RewardPreferenceSave {
+  wallet: string;
+  message: string;
+  nonce: string;
+  signature: string;
+  kind: Exclude<RewardKind, "CUSTOM">;
+}
+
+export interface SocialClaimStatus {
+  ok: boolean;
+  enabled: boolean;
+  ticker?: string;
+  mint?: string;
+  handle?: string;
+  template?: string | null;
+}
+
+export interface SocialClaimSubmit {
+  tweetUrl: string;
+  wallet: string;
+}
+
+export interface SocialClaimResult {
+  ok: boolean;
+  status: "pending";
+  boostUntil: Iso;
+  message: string;
 }

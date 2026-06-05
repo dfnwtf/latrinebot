@@ -2,6 +2,16 @@
 
 All notable changes to `@latrinebot/cli`.
 
+## [0.4.6] - 2026-06-05
+
+### Added
+- `latrine reward-options <project-id>` - public holder perk options.
+- `latrine social-claim <project-id>` - boost status and post template.
+- `latrine social-claim claim <project-id> --url URL --wallet WALLET` - claim a 1-hour boost.
+
+### Changed
+- Depends on `@latrinebot/sdk@^0.4.6`.
+
 ## [0.4.4] - 2026-05-31
 
 ### Changed

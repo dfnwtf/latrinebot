@@ -43,6 +43,12 @@ Given the current market cap in USD, the engine picks the **highest** tier row w
 
 The floor scales down as MC grows so a new buyer can still qualify with a sensible USD ticket. The hold-cycles requirement scales up so late entrants prove conviction before getting drops.
 
+### Holder perks (optional)
+
+When enabled, **holder reward choice** does not change who qualifies - only which asset cohort receives a wallet's payout.
+
+**X post boost** (when `socialClaimEnabled`): claim on the token page with an X post URL + wallet. Default **1-hour** active window; **one post URL per token forever**; **one wallet per claim**. Runs after the hold-cycle gate - eligible holders get a weight multiplier (default 1.15x); everyone else (including holders still gated by streak) can get a small intro share with virtual weight (`socialNonHolderWeightRatio` x tier `minTokens`) in the dev default cohort only. Does not bypass hold streaks. See [configuration](./configuration.md#x-post-boost-boost).
+
 ### Worked example
 
 Assume the fixed Pump.fun supply (1 B tokens). Token price = MC / supply.
