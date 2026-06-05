@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Latrine Bot API
-  version: 0.4.5
+  version: 0.4.6
   summary: Cloud automation engine for Pump.fun tokens.
   description: |
     Public HTTP API for [Latrine Bot](https://latrinebot.com). Covers authentication
@@ -642,6 +642,153 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/ShareCardBundle" }
 
+  /api/public/realm/{id}/reward-options:
+    get:
+      tags: [public]
+      summary: Holder perk options and dev default
+      security: []
+      parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RewardOptionsResponse" }
+
+  /api/public/realm/{id}/reward-preference:
+    get:
+      tags: [public]
+      summary: Read a wallet reward preference
+      security: []
+      parameters:
+        - { $ref: "#/components/parameters/ProjectId" }
+        - in: query
+          name: wallet
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RewardPreferenceResponse" }
+    post:
+      tags: [public]
+      summary: Save wallet reward preference (SIWS)
+      security: []
+      parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RewardPreferenceSave" }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RewardPreferenceResponse" }
+
+  /api/public/realm/{id}/social-claim:
+    get:
+      tags: [public]
+      summary: X post boost status and template
+      security: []
+      parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SocialClaimStatus" }
+    post:
+      tags: [public]
+      summary: Claim X post boost
+      description: |
+        Binds one X post URL to one wallet for this token. Default active window is 60 minutes
+        (`socialBoostDurationMin`). Each tweet_id is one-time per project forever (409 on reuse).
+        No SIWS required. Tweet text must include $TICKER, full mint CA, and @handle.
+      security: []
+      parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SocialClaimSubmit" }
+      responses:
+        "200":
+          description: Boost accepted; window started
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SocialClaimResult" }
+        "409":
+          description: Tweet already used for this token
+
+  /api/public/latrine/reward-options:
+    get:
+      tags: [public]
+      summary: Homepage showcase holder perk options
+      security: []
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RewardOptionsResponse" }
+
+  /api/public/latrine/reward-preference:
+    get:
+      tags: [public]
+      summary: Homepage showcase reward preference read
+      security: []
+      parameters:
+        - in: query
+          name: wallet
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RewardPreferenceResponse" }
+    post:
+      tags: [public]
+      summary: Homepage showcase reward preference save (SIWS)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RewardPreferenceSave" }
+      responses:
+        "200":
+          description: ok
+
+  /api/public/latrine/social-claim:
+    get:
+      tags: [public]
+      summary: Homepage showcase X post boost status
+      security: []
+      responses:
+        "200":
+          description: ok
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SocialClaimStatus" }
+    post:
+      tags: [public]
+      summary: Homepage showcase X post boost claim
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SocialClaimSubmit" }
+      responses:
+        "200":
+          description: ok
+
   /api/public/ward-roll:
     get:
       tags: [public]
@@ -789,7 +936,29 @@ components:
         minReserveSol: { type: number, minimum: 0 }
         slippageBps: { type: integer, minimum: 0, maximum: 10000 }
         buybackPercent: { type: integer, minimum: 0, maximum: 100 }
+        burnPercent: { type: integer, minimum: 0, maximum: 100 }
         rewardAsset: { $ref: "#/components/schemas/RewardAsset" }
+        holderRewardChoiceEnabled:
+          type: boolean
+          description: Enable holder reward currency choice on the public token page.
+        socialClaimEnabled:
+          type: boolean
+          description: Enable X post drop boost on the public token page.
+        socialBoostDurationMin:
+          type: integer
+          minimum: 5
+          maximum: 1440
+          description: Minutes a claimed X post boost stays active (default 60). Timer starts at claim time.
+        socialHolderBoostMultiplier:
+          type: number
+          minimum: 1
+          maximum: 3
+          description: Weight multiplier for eligible holders with an active social boost.
+        socialNonHolderWeightRatio:
+          type: number
+          minimum: 0
+          maximum: 0.5
+          description: Virtual weight ratio (x tier minTokens) for non-holder intro drops.
         eligibilityTiers:
           type: array
           items: { $ref: "#/components/schemas/EligibilityTier" }
@@ -937,6 +1106,79 @@ components:
           required: [pngUrl]
           properties:
             pngUrl: { type: string, format: uri }
+
+    RewardOptionsResponse:
+      type: object
+      required: [ok, enabled, options]
+      properties:
+        ok: { type: boolean }
+        enabled: { type: boolean }
+        options:
+          type: array
+          items: { type: string, enum: [SAME, SOL, USDC] }
+        defaultKind: { type: string, enum: [SAME, SOL, USDC] }
+        defaultRewardKind: { type: string, enum: [SAME, SOL, USDC] }
+        defaultRewardLabel: { type: string }
+        rewardMint: { type: string, nullable: true }
+        ticker: { type: string }
+
+    RewardPreferenceResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }
+        kind:
+          type: string
+          enum: [SAME, SOL, USDC]
+          nullable: true
+
+    RewardPreferenceSave:
+      type: object
+      required: [wallet, message, nonce, signature, kind]
+      properties:
+        wallet: { type: string }
+        message: { type: string }
+        nonce: { type: string }
+        signature: { type: string }
+        kind: { type: string, enum: [SAME, SOL, USDC] }
+
+    SocialClaimStatus:
+      type: object
+      required: [ok, enabled]
+      properties:
+        ok: { type: boolean }
+        enabled: { type: boolean }
+        ticker: { type: string }
+        mint: { type: string }
+        handle: { type: string }
+        template: { type: string, nullable: true }
+
+    SocialClaimSubmit:
+      type: object
+      required: [tweetUrl, wallet]
+      properties:
+        tweetUrl:
+          type: string
+          format: uri
+          description: Full x.com or twitter.com post link. One URL per token, forever.
+        wallet:
+          type: string
+          description: Base58 Solana pubkey that receives boost effects in subsequent cycles.
+
+    SocialClaimResult:
+      type: object
+      required: [ok, status, boostUntil, message]
+      properties:
+        ok: { type: boolean }
+        status:
+          type: string
+          enum: [pending]
+          description: pending until a paying cycle marks the claim paid
+        boostUntil:
+          type: string
+          format: date-time
+          description: UTC end of the active boost window (default now + 60 minutes)
+        message: { type: string }
 
     ApiError:
       type: object

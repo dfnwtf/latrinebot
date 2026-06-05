@@ -2,6 +2,14 @@
 
 All notable changes to `@latrinebot/sdk`.
 
+## [0.4.6] - 2026-06-05
+
+### Added
+- Holder perks on `public.realm`: `rewardOptions`, `rewardPreference`, `saveRewardPreference`.
+- X post boost on `public.realm`: `socialClaim`, `claimSocialBoost`.
+- `ProjectSettings` fields: `holderRewardChoiceEnabled`, `socialClaimEnabled`, `socialBoostDurationMin`, `socialHolderBoostMultiplier`, `socialNonHolderWeightRatio`.
+- OpenAPI paths and schemas for holder reward choice and social claim (`RewardOptionsResponse`, `SocialClaimStatus`, `SocialClaimResult`, etc.).
+
 ## [0.4.4] - 2026-05-31
 
 ### Added

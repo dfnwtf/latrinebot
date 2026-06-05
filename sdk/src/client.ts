@@ -13,8 +13,14 @@ import type {
   ProjectStatsBucketResponse,
   ProvidersInfo,
   PublicEligibility,
+  RewardOptionsResponse,
+  RewardPreferenceResponse,
+  RewardPreferenceSave,
   ShareCardBundle,
   ShareCardCaption,
+  SocialClaimResult,
+  SocialClaimStatus,
+  SocialClaimSubmit,
   WidgetSummary,
 } from "./types.js";
 
@@ -54,7 +60,7 @@ export class LatrineClient {
     this.token = options.token;
     this.metricsKey = options.metricsKey;
     this.fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis);
-    this.userAgent = `latrinebot-sdk/0.4.5${options.userAgent ? ` ${options.userAgent}` : ""}`;
+    this.userAgent = `latrinebot-sdk/0.4.6${options.userAgent ? ` ${options.userAgent}` : ""}`;
   }
 
   /** Attach (or replace) the session Bearer token used by authenticated routes. */
@@ -527,6 +533,50 @@ export class LatrineClient {
       shareCard: (projectId: string): Promise<ShareCardBundle> =>
         this.request({
           path: `/api/public/realm/${projectId}/share-card/bundle`,
+          auth: "none",
+        }),
+
+      rewardOptions: (projectId: string): Promise<RewardOptionsResponse> =>
+        this.request({
+          path: `/api/public/realm/${projectId}/reward-options`,
+          auth: "none",
+        }),
+
+      rewardPreference: (
+        projectId: string,
+        input: { wallet: string },
+      ): Promise<RewardPreferenceResponse> =>
+        this.request({
+          path: `/api/public/realm/${projectId}/reward-preference`,
+          query: { wallet: input.wallet },
+          auth: "none",
+        }),
+
+      saveRewardPreference: (
+        projectId: string,
+        input: RewardPreferenceSave,
+      ): Promise<RewardPreferenceResponse> =>
+        this.request({
+          method: "POST",
+          path: `/api/public/realm/${projectId}/reward-preference`,
+          body: input,
+          auth: "none",
+        }),
+
+      socialClaim: (projectId: string): Promise<SocialClaimStatus> =>
+        this.request({
+          path: `/api/public/realm/${projectId}/social-claim`,
+          auth: "none",
+        }),
+
+      claimSocialBoost: (
+        projectId: string,
+        input: SocialClaimSubmit,
+      ): Promise<SocialClaimResult> =>
+        this.request({
+          method: "POST",
+          path: `/api/public/realm/${projectId}/social-claim`,
+          body: input,
           auth: "none",
         }),
     },

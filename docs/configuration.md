@@ -63,6 +63,44 @@ A tier row has shape:
 
 Rows are sorted by `mcUsd` ascending. The engine picks the highest row whose `mcUsd <= current market cap`.
 
+### Holder reward choice (Holder perk)
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `holderRewardChoiceEnabled` | bool | `false` | When on, eligible holders can save a payout preference (SAME / SOL / USDC) on the token page via SIWS. Eligibility stays on the project mint. |
+
+### X post boost (Boost)
+
+Optional social perk on the token page. Anyone posts on X, then pastes the post URL + wallet (no SIWS).
+
+**Core rules**
+
+| Rule | Detail |
+|---|---|
+| Active window | **1 hour** by default (`socialBoostDurationMin: 60`, range 5-1440 via PATCH) |
+| One post per token | Each X URL (`tweet_id`) is claimable **once per project, forever** (`409` on reuse) |
+| One wallet per claim | Each submission binds **one post to one wallet** |
+| Boost again | New X post + new URL after window ends or after payout |
+| LIVE only | Requires `mode: LIVE`, mint set, `socialClaimEnabled: true` |
+
+**Per cycle (after hold-cycle gate)**
+
+- **Eligible holder** (balance + streak): weight x `socialHolderBoostMultiplier` (default 1.15)
+- **Everyone else** (no bag, below floor, anti-whale, or streak not met): small intro share with virtual weight = `socialNonHolderWeightRatio` x tier `minTokens` (default 8%), dev default cohort only (`socialOnly`)
+
+Does not change eligibility history or bypass hold streaks for full tier status.
+
+| Field | Type | Default | Notes |
+|---|---|---|---|
+| `socialClaimEnabled` | bool | `false` | Shows Boost panel; server fetches and validates tweet text |
+| `socialBoostDurationMin` | int | `60` | Active window in minutes (5-1440). Not in dashboard UI yet |
+| `socialHolderBoostMultiplier` | float | `1.15` | Multiplier for eligible holders with an active boost (1-3) |
+| `socialNonHolderWeightRatio` | float | `0.08` | Virtual weight for non-holders as a fraction of tier `minTokens` (0-0.5) |
+
+Post must include `$TICKER` (with `$`), full project mint, `@Latrine_bot` (or `X_TWITTER_HANDLE`), and at most one Solana address in the body. Suggested copy: `GET .../social-claim` → `template`.
+
+Full docs: [web configuration](https://latrinebot.com/docs/configuration.html#social-claim-boost).
+
 ## Wallet credentials
 
 Edit at `/app/projects/:id` -> **Credentials**. Saved with `POST /api/projects/:id/secrets`.
@@ -108,6 +146,11 @@ Manage them at `/app/projects/:id` -> **Metrics keys**. CRUD on `GET/POST /api/p
   "slippageBps": 500,
   "buybackPercent": 100,
   "rewardAsset": { "kind": "SAME", "mint": null },
+  "holderRewardChoiceEnabled": false,
+  "socialClaimEnabled": false,
+  "socialBoostDurationMin": 60,
+  "socialHolderBoostMultiplier": 1.15,
+  "socialNonHolderWeightRatio": 0.08,
   "eligibilityTiers": [
     { "mcUsd":         0, "minTokens": 500000, "holdCycles": 5 },
     { "mcUsd":     50000, "minTokens": 450000, "holdCycles": 6 },

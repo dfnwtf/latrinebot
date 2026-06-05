@@ -72,6 +72,9 @@ READ-ONLY (metrics key)
   events       <project-id> [--limit N]    Recent events
   watch        <project-id> [--interval N] Live tail (default 5s)
   eligibility  <project-id> <wallet>       Public eligibility lookup (no auth)
+  reward-options <project-id>              Holder perk options (no auth)
+  social-claim <project-id>                X post boost status + template (no auth)
+  social-claim claim <project-id>          Claim boost (--url --wallet)
 
 AUTHENTICATED (Bearer JWT)
   preflight    <project-id>                Run preflight, exit non-zero on red required checks
@@ -174,6 +177,37 @@ async function main(): Promise<void> {
       print(args, r, () => (r.eligible
         ? `eligible at tier MC>=${r.tier?.mcUsd}, needs >= ${r.tier?.minTokens} tokens`
         : `not eligible (${r.reason ?? "unknown"})`));
+      return;
+    }
+    case "reward-options": {
+      const id = sub ?? fail("reward-options: missing project id");
+      const r = await c.public.realm.rewardOptions(id);
+      print(args, r, () => (r.enabled
+        ? `enabled: ${r.options.join(", ")} (default ${r.defaultRewardKind ?? r.defaultKind ?? "SAME"})`
+        : "holder reward choice disabled"));
+      return;
+    }
+    case "social-claim": {
+      if (sub === "claim") {
+        const id = rest[0] ?? fail("social-claim claim: missing project id");
+        const tweetUrl = String(args.flags["url"] ?? "");
+        const wallet = String(args.flags["wallet"] ?? "");
+        if (!tweetUrl) fail("social-claim claim: --url required");
+        if (!wallet) fail("social-claim claim: --wallet required");
+        const r = await c.public.realm.claimSocialBoost(id, { tweetUrl, wallet });
+        print(args, r, () => r.message || `boost active until ${r.boostUntil}`);
+        return;
+      }
+      const id = sub ?? fail("social-claim: missing project id");
+      const r = await c.public.realm.socialClaim(id);
+      print(args, r, () => {
+        if (!r.enabled) return "X post boost disabled for this token";
+        const lines = [
+          `enabled: ${r.ticker ?? ""} ${r.handle ?? ""}`,
+          r.template ? `template:\n${r.template}` : "",
+        ].filter(Boolean);
+        return lines.join("\n\n");
+      });
       return;
     }
     case "preflight": {
