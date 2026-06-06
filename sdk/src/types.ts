@@ -118,7 +118,7 @@ export interface PolicyHistoryEntry {
   time: string;
 }
 
-/** Sticky banner for the latest POLICY event (omitted when older than 48 h). */
+/** Sticky banner for the latest POLICY event (omitted only when no policy changes yet). */
 export interface PolicyAlert {
   at: Iso;
   body: string;

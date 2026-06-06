@@ -28,6 +28,11 @@ Nothing runs on your machine. You connect a wallet, configure rules in a dashboa
 
 - [Security](./security.md) - how secrets are stored, how preflight protects launches, how account isolation works
 
+## Legal
+
+- [Terms and Conditions](./terms.md) - service terms, mandatory LIVE transparency, holder perks (canonical: [latrinebot.com/terms.html](https://latrinebot.com/terms.html))
+- [Privacy Policy](./privacy.md) - data collection, public policy audit, holder perk data (canonical: [latrinebot.com/privacy.html](https://latrinebot.com/privacy.html))
+
 ## Links
 
 - Site: [latrinebot.com](https://latrinebot.com)

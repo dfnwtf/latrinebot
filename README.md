@@ -97,6 +97,7 @@ Issues and PRs welcome - read [`CONTRIBUTING.md`](./CONTRIBUTING.md) first. Styl
 - npm: [@latrinebot/sdk](https://www.npmjs.com/package/@latrinebot/sdk), [@latrinebot/widgets](https://www.npmjs.com/package/@latrinebot/widgets), [@latrinebot/cli](https://www.npmjs.com/package/@latrinebot/cli)
 - X: [@Latrine_bot](https://x.com/Latrine_bot)
 - Security: [`SECURITY.md`](./SECURITY.md) - latrine@atomicmail.io
+- Legal: [`docs/terms.md`](./docs/terms.md), [`docs/privacy.md`](./docs/privacy.md)
 
 ## License
 

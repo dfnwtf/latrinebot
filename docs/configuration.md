@@ -80,9 +80,11 @@ When a project owner saves policy-affecting settings (`PATCH` with `settings`), 
 **Where it appears**
 
 - Token page banner (`poolSplit`, `publicFeatures` on `GET .../realm/:id/live`)
-- Sidebar **Distribution history** (`policyHistory`)
-- Public activity log + 48 h sticky banner (`policyAlert`)
+- Sidebar **Distribution history** (`policyHistory`, up to 50 entries from permanent audit storage)
+- Public activity log + permanent sticky banner for the latest change (`policyAlert`, until the next change)
 - Dashboard Output (`GET .../events` / SSE) - same `POLICY` text
+
+**Storage:** policy changes are written to a dedicated `project_policy_log` table (up to **100** entries per project) so they are not lost when cycle event spam is trimmed. The activity log tail is separate (up to **120** displayed lines, **200** non-`POLICY` events per project in the events table).
 
 Token page polls about every **20 s**. The dashboard confirms before saving when a public policy change is detected.
 

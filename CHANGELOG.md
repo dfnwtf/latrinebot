@@ -22,6 +22,14 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/). 
 ### Changed (docs, 2026-06-06)
 - Distribution transparency documented on latrinebot.com and in this repo (`configuration`, `api-reference`, `security`). `@latrinebot/sdk` 0.4.8 adds `RealmLiveResponse` OpenAPI + types.
 
+### Added (2026-06-06)
+- **Permanent policy audit** - `project_policy_log` table; `policyHistory` / `policyAlert` no longer depend on cycle event tail. Token page banner stays until the next change.
+- **Legal docs** in `docs/terms.md` and `docs/privacy.md` (mirrors latrinebot.com; mandatory LIVE transparency, holder perks, public audit retention).
+- Token page UX: distinguish real 404 from transient API errors.
+
+### Changed (docs, 2026-06-06, legal)
+- Terms and Privacy updated for mandatory distribution transparency, holder perks, and policy audit retention. OpenAPI `policyAlert` / `policyHistory` descriptions aligned.
+
 ## [0.4.4] - 2026-05-29
 
 ### Added

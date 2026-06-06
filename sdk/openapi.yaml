@@ -1059,6 +1059,7 @@ components:
 
     PolicyAlert:
       type: object
+      description: Sticky banner for the latest POLICY change (omitted only when no policy changes yet).
       properties:
         at: { type: string, format: date-time }
         body: { type: string }
@@ -1098,6 +1099,7 @@ components:
         publicFeatures: { $ref: "#/components/schemas/PublicFeatures" }
         policyHistory:
           type: array
+          description: Up to 50 POLICY lines from permanent audit storage (newest first).
           items: { $ref: "#/components/schemas/PolicyHistoryEntry" }
         policyAlert: { $ref: "#/components/schemas/PolicyAlert" }
 
