@@ -74,7 +74,7 @@ READ-ONLY (metrics key)
   eligibility  <project-id> <wallet>       Public eligibility lookup (no auth)
   reward-options <project-id>              Holder perk options (no auth)
   social-claim <project-id>                X post boost status + template (no auth)
-  social-claim claim <project-id>          Claim boost (--url --wallet)
+  social-claim claim <project-id>          Claim 1h boost (--url --wallet); one URL per token forever, one active claim per wallet per token
 
 AUTHENTICATED (Bearer JWT)
   preflight    <project-id>                Run preflight, exit non-zero on red required checks

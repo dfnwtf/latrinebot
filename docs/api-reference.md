@@ -134,7 +134,7 @@ See [metrics API](./metrics-api.md) for full payload shapes.
 | GET | `/api/public/realm/:id/reward-preference?wallet=` | Saved holder reward kind or `null` |
 | POST | `/api/public/realm/:id/reward-preference` | Save holder reward kind (SIWS: wallet, message, nonce, signature, kind) |
 | GET | `/api/public/realm/:id/social-claim` | X post boost: enabled + suggested post template |
-| POST | `/api/public/realm/:id/social-claim` | Claim boost (`{ tweetUrl, wallet }`) - 1h window (default), one URL per token forever, one wallet per claim, no SIWS |
+| POST | `/api/public/realm/:id/social-claim` | Claim boost (`{ tweetUrl, wallet }`) - 1h window (default). One post URL per token forever (global); one active claim per wallet per token; limits are per token. No SIWS. `409` if URL reused or wallet already boosted on this token |
 | GET | `/api/public/latrine/live` | Homepage showcase ledger |
 | GET | `/api/public/latrine/reward-options` | Showcase holder perk (KV snapshot) |
 | GET/POST | `/api/public/latrine/reward-preference` | Showcase holder prefs (KV) |

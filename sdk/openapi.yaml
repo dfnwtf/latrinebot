@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Latrine Bot API
-  version: 0.4.6
+  version: 0.4.7
   summary: Cloud automation engine for Pump.fun tokens.
   description: |
     Public HTTP API for [Latrine Bot](https://latrinebot.com). Covers authentication
@@ -705,8 +705,14 @@ paths:
       tags: [public]
       summary: Claim X post boost
       description: |
-        Binds one X post URL to one wallet for this token. Default active window is 60 minutes
-        (`socialBoostDurationMin`). Each tweet_id is one-time per project forever (409 on reuse).
+        Claims a 1-hour X post boost for one wallet on this token. Default window is 60 minutes
+        (`socialBoostDurationMin`).
+
+        Rules: one post URL per token forever (global, first claim wins); one active claim per
+        wallet per token while `boost_until` is in the future (409 includes `boostUntil`); different
+        wallets can claim different posts on the same token; the same wallet can boost other tokens
+        in parallel.
+
         No SIWS required. Tweet text must include $TICKER, full mint CA, and @handle.
       security: []
       parameters: [{ $ref: "#/components/parameters/ProjectId" }]
@@ -722,7 +728,7 @@ paths:
             application/json:
               schema: { $ref: "#/components/schemas/SocialClaimResult" }
         "409":
-          description: Tweet already used for this token
+          description: Tweet URL already used for this token, or wallet already has an active boost on this token
 
   /api/public/latrine/reward-options:
     get:
@@ -779,6 +785,8 @@ paths:
     post:
       tags: [public]
       summary: Homepage showcase X post boost claim
+      description: |
+        Same rules as `POST /api/public/realm/{id}/social-claim` for the operator-bound showcase project.
       security: []
       requestBody:
         required: true
@@ -787,7 +795,12 @@ paths:
             schema: { $ref: "#/components/schemas/SocialClaimSubmit" }
       responses:
         "200":
-          description: ok
+          description: Boost accepted; window started
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SocialClaimResult" }
+        "409":
+          description: Tweet URL already used for this token, or wallet already has an active boost on this token
 
   /api/public/ward-roll:
     get:

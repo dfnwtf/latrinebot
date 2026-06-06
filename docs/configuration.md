@@ -78,8 +78,10 @@ Optional social perk on the token page. Anyone posts on X, then pastes the post 
 | Rule | Detail |
 |---|---|
 | Active window | **1 hour** by default (`socialBoostDurationMin: 60`, range 5-1440 via PATCH) |
-| One post per token | Each X URL (`tweet_id`) is claimable **once per project, forever** (`409` on reuse) |
-| One wallet per claim | Each submission binds **one post to one wallet** |
+| One post URL per token, forever | Each X URL (`tweet_id`) is claimable **once per project, globally** (`409` on reuse). First valid claim wins |
+| One active claim per wallet per token | While `boost_until` is active, that wallet cannot claim a second post on **this** token (`409` + `boostUntil`). After the hour, use a **new** post URL |
+| Different wallets, same token | Each wallet can claim its own post URL (each URL still once) |
+| Same wallet, other tokens | Limits are per token - parallel boosts on other projects are allowed |
 | Boost again | New X post + new URL after window ends or after payout |
 | LIVE only | Requires `mode: LIVE`, mint set, `socialClaimEnabled: true` |
 

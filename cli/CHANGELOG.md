@@ -2,6 +2,11 @@
 
 All notable changes to `@latrinebot/cli`.
 
+## [0.4.7] - 2026-06-05
+
+### Changed
+- Depends on `@latrinebot/sdk@^0.4.7` (OpenAPI doc clarification for X post boost rules).
+
 ## [0.4.6] - 2026-06-05
 
 ### Added

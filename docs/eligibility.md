@@ -47,7 +47,13 @@ The floor scales down as MC grows so a new buyer can still qualify with a sensib
 
 When enabled, **holder reward choice** does not change who qualifies - only which asset cohort receives a wallet's payout.
 
-**X post boost** (when `socialClaimEnabled`): claim on the token page with an X post URL + wallet. Default **1-hour** active window; **one post URL per token forever**; **one wallet per claim**. Runs after the hold-cycle gate - eligible holders get a weight multiplier (default 1.15x); everyone else (including holders still gated by streak) can get a small intro share with virtual weight (`socialNonHolderWeightRatio` x tier `minTokens`) in the dev default cohort only. Does not bypass hold streaks. See [configuration](./configuration.md#x-post-boost-boost).
+**X post boost** (when `socialClaimEnabled`): claim on the token page with an X post URL + wallet. Default **1-hour** active window.
+
+- **One post URL per token, forever (global)** - first valid claim wins; same link never works twice on that project.
+- **One active claim per wallet per token** - while the hour runs, that wallet cannot claim a second post on this token; after it ends, use a new URL. Other tokens are unaffected.
+- **Different wallets** can each claim a different post on the same token.
+
+Runs after the hold-cycle gate - eligible holders get a weight multiplier (default 1.15x); everyone else (including holders still gated by streak) can get a small intro share with virtual weight (`socialNonHolderWeightRatio` x tier `minTokens`) in the dev default cohort only. Does not bypass hold streaks. See [configuration](./configuration.md#x-post-boost-boost).
 
 ### Worked example
 

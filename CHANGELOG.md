@@ -8,12 +8,15 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/). 
 
 ### Added
 - **Holder reward choice** - eligible holders pick SAME / SOL / USDC on the token page (SIWS).
-- **X post boost** - optional 1-hour social perk: one post URL per token, one wallet per claim; holders get a weight multiplier, non-holders a small intro share.
+- **X post boost** - optional 1-hour social perk: one post URL per token forever, one active claim per wallet per token; holders get a weight multiplier, non-holders a small intro share.
 - Public API: `GET/POST .../reward-preference`, `GET .../reward-options`, `GET/POST .../social-claim` (realm + showcase).
 - `@latrinebot/sdk` 0.4.6 and `@latrinebot/cli` 0.4.6 with typed client methods and `latrine social-claim` / `latrine reward-options` commands.
 
 ### Changed
 - Documentation: full boost mechanics (1h window, claim rules, cycle behaviour) in configuration, eligibility, and API reference.
+
+### Changed (docs, 2026-06-05)
+- X post boost rules clarified everywhere: one post URL per token globally; one active claim per wallet per token; different wallets and other tokens documented. `@latrinebot/sdk` / `@latrinebot/cli` 0.4.7 OpenAPI bump.
 
 ## [0.4.4] - 2026-05-29
 

@@ -2,6 +2,11 @@
 
 All notable changes to `@latrinebot/sdk`.
 
+## [0.4.7] - 2026-06-05
+
+### Changed
+- OpenAPI: clarified X post boost claim rules (one post URL per token forever, one active claim per wallet per token, cross-wallet and cross-token behaviour) and `409` responses.
+
 ## [0.4.6] - 2026-06-05
 
 ### Added
