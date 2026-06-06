@@ -7,6 +7,7 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/). 
 ## [0.4.6] - 2026-06-05
 
 ### Added
+- **Public distribution transparency** - fee split, payout currency, and public perk toggles on the token page; mandatory `POLICY` audit log on settings PATCH (dashboard Output + token page history). No dev opt-out; major holder cuts (≥20 pp or to 0%) flagged server-side as `alert`.
 - **Holder reward choice** - eligible holders pick SAME / SOL / USDC on the token page (SIWS).
 - **X post boost** - optional 1-hour social perk: one post URL per token forever, one active claim per wallet per token; holders get a weight multiplier, non-holders a small intro share.
 - Public API: `GET/POST .../reward-preference`, `GET .../reward-options`, `GET/POST .../social-claim` (realm + showcase).
@@ -17,6 +18,9 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/). 
 
 ### Changed (docs, 2026-06-05)
 - X post boost rules clarified everywhere: one post URL per token globally; one active claim per wallet per token; different wallets and other tokens documented. `@latrinebot/sdk` / `@latrinebot/cli` 0.4.7 OpenAPI bump.
+
+### Changed (docs, 2026-06-06)
+- Distribution transparency documented on latrinebot.com and in this repo (`configuration`, `api-reference`, `security`). `@latrinebot/sdk` 0.4.8 adds `RealmLiveResponse` OpenAPI + types.
 
 ## [0.4.4] - 2026-05-29
 

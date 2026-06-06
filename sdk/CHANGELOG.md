@@ -2,6 +2,15 @@
 
 All notable changes to `@latrinebot/sdk`.
 
+## [0.4.8] - 2026-06-06
+
+### Added
+- `RealmLiveResponse` and related types (`PoolSplit`, `PublicFeatures`, `PolicyHistoryEntry`, `PolicyAlert`, `RealmFeedLine`) for `GET /api/public/realm/{id}/live`.
+- OpenAPI documents mandatory public `POLICY` audit fields on the token page (no dev opt-out).
+
+### Changed
+- `public.realm.live()` return type is now `RealmLiveResponse` (was `ProjectStats`).
+
 ## [0.4.7] - 2026-06-05
 
 ### Changed

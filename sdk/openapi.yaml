@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Latrine Bot API
-  version: 0.4.7
+  version: 0.4.8
   summary: Cloud automation engine for Pump.fun tokens.
   description: |
     Public HTTP API for [Latrine Bot](https://latrinebot.com). Covers authentication
@@ -601,7 +601,11 @@ paths:
   /api/public/realm/{id}/live:
     get:
       tags: [public]
-      summary: Per-token public LIVE stats
+      summary: Per-token public LIVE stats and distribution transparency
+      description: |
+        Token page payload: public stats, activity log tail, current fee split (`poolSplit`),
+        perk flags (`publicFeatures`), and mandatory policy audit (`policyHistory`, `policyAlert`).
+        Policy rows are appended server-side on `PATCH` settings changes; devs cannot disable logging.
       security: []
       parameters: [{ $ref: "#/components/parameters/ProjectId" }]
       responses:
@@ -609,7 +613,7 @@ paths:
           description: ok
           content:
             application/json:
-              schema: { $ref: "#/components/schemas/ProjectStats" }
+              schema: { $ref: "#/components/schemas/RealmLiveResponse" }
 
   /api/public/realm/{id}/check-eligibility:
     get:
@@ -1028,6 +1032,74 @@ components:
         lastEligibleCount: { type: integer, nullable: true }
         burnedDisplay: { type: string }
         totalClaimedSol: { type: number }
+
+    PoolSplit:
+      type: object
+      required: [distributePct, burnPct, holdPct]
+      properties:
+        distributePct: { type: integer, description: "Holder airdrop % (settings.buybackPercent)." }
+        burnPct: { type: integer }
+        holdPct: { type: integer, description: "Remainder kept in the fee pool." }
+
+    PublicFeatures:
+      type: object
+      properties:
+        holderRewardChoice: { type: boolean }
+        socialClaimBoost: { type: boolean }
+        defaultRewardLabel: { type: string }
+        defaultRewardKind: { type: string }
+
+    PolicyHistoryEntry:
+      type: object
+      properties:
+        at: { type: string, format: date-time }
+        body: { type: string }
+        severity: { type: string, nullable: true }
+        time: { type: string, description: "HH:MM:SS slice of at (UTC)." }
+
+    PolicyAlert:
+      type: object
+      properties:
+        at: { type: string, format: date-time }
+        body: { type: string }
+        severity: { type: string }
+        ageSec: { type: integer }
+
+    RealmFeedLine:
+      type: object
+      properties:
+        tag: { type: string }
+        body: { type: string }
+        severity: { type: string, nullable: true }
+        at: { type: string, format: date-time }
+        time: { type: string }
+
+    RealmLiveResponse:
+      type: object
+      description: |
+        Token page LIVE snapshot. Policy audit fields are read-only; logging is triggered by
+        PATCH settings on the server (no opt-out).
+      properties:
+        ok: { type: boolean }
+        status: { type: string, enum: [live, idle, waiting] }
+        stale: { type: boolean }
+        running: { type: boolean }
+        mode: { type: string, enum: [LIVE] }
+        mint: { type: string }
+        ticker: { type: string }
+        name: { type: string }
+        stats: { $ref: "#/components/schemas/PublicStats" }
+        publicStats: { $ref: "#/components/schemas/PublicStats" }
+        recent:
+          type: array
+          items: { $ref: "#/components/schemas/RealmFeedLine" }
+        feedDisplayLimit: { type: integer }
+        poolSplit: { $ref: "#/components/schemas/PoolSplit" }
+        publicFeatures: { $ref: "#/components/schemas/PublicFeatures" }
+        policyHistory:
+          type: array
+          items: { $ref: "#/components/schemas/PolicyHistoryEntry" }
+        policyAlert: { $ref: "#/components/schemas/PolicyAlert" }
 
     ProjectStats:
       type: object

@@ -16,6 +16,7 @@ import type {
   RewardOptionsResponse,
   RewardPreferenceResponse,
   RewardPreferenceSave,
+  RealmLiveResponse,
   ShareCardBundle,
   ShareCardCaption,
   SocialClaimResult,
@@ -514,7 +515,7 @@ export class LatrineClient {
     },
 
     realm: {
-      live: (projectId: string): Promise<ProjectStats> =>
+      live: (projectId: string): Promise<RealmLiveResponse> =>
         this.request({
           path: `/api/public/realm/${projectId}/live`,
           auth: "none",

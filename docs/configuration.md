@@ -63,6 +63,31 @@ A tier row has shape:
 
 Rows are sorted by `mcUsd` ascending. The engine picks the highest row whose `mcUsd <= current market cap`.
 
+### Public distribution transparency
+
+When a project owner saves policy-affecting settings (`PATCH` with `settings`), the API **always** appends public `POLICY` events. There is **no toggle to disable** this and **no setting** to change major-cut rules or hide lines from the token page.
+
+**Triggers**
+
+| Change | Log |
+|---|---|
+| Fee split (`buybackPercent`, `burnPercent`, hold %) | `Distribution changed. Holders X% -> Y%. Burn … Hold …` |
+| Major holder cut (platform rule) | `Major distribution cut. …` with severity `alert` when airdrop % drops **≥20 pp** or to **0%** |
+| `rewardAsset` | `Payout currency changed: …` |
+| `holderRewardChoiceEnabled` | enabled / disabled message |
+| `socialClaimEnabled` | X post boost enabled / disabled message |
+
+**Where it appears**
+
+- Token page banner (`poolSplit`, `publicFeatures` on `GET .../realm/:id/live`)
+- Sidebar **Distribution history** (`policyHistory`)
+- Public activity log + 48 h sticky banner (`policyAlert`)
+- Dashboard Output (`GET .../events` / SSE) - same `POLICY` text
+
+Token page polls about every **20 s**. The dashboard confirms before saving when a public policy change is detected.
+
+Full API: [web configuration](https://latrinebot.com/docs/configuration.html#distribution-transparency), [API reference](https://latrinebot.com/docs/api-reference.html#distribution-transparency).
+
 ### Holder reward choice (Holder perk)
 
 | Field | Type | Default | Notes |

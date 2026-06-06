@@ -127,7 +127,7 @@ See [metrics API](./metrics-api.md) for full payload shapes.
 |---|---|---|
 | GET | `/api/public/widgets/:id/config` | Widget layout + theme (cached 60 s) |
 | GET | `/api/public/widgets/:id/live` | Widget stats + event tail (cached 5 s, 120 req/min/IP) |
-| GET | `/api/public/realm/:id/live` | Per-token public LIVE stats (LIVE-mode realms only) |
+| GET | `/api/public/realm/:id/live` | Token page LIVE payload: stats, activity log, `poolSplit`, `publicFeatures`, `policyHistory`, `policyAlert` (LIVE only) |
 | GET/POST | `/api/public/realm/:id/check-eligibility` | Public eligibility lookup (`?wallet=` or JSON body) |
 | GET | `/api/public/realm/:id/share-card/bundle` | Per-token public share card |
 | GET | `/api/public/realm/:id/reward-options` | Holder perk: enabled + SAME/SOL/USDC options + dev default |
@@ -141,6 +141,8 @@ See [metrics API](./metrics-api.md) for full payload shapes.
 | GET/POST | `/api/public/latrine/social-claim` | Showcase social boost (bound project D1) |
 | GET/POST | `/api/public/latrine/check-eligibility` | Showcase eligibility (KV snapshot) |
 | GET | `/api/public/ward-roll` | Ward-roll realm listing (`?faces=1` for hero faces) |
+
+**Distribution transparency:** `PATCH /api/projects/:id` with policy settings appends mandatory `POLICY` events (no opt-out). Realm live fields: `poolSplit`, `publicFeatures`, `policyHistory`, `policyAlert`. See [configuration](./configuration.md#public-distribution-transparency) and web docs `/docs/api-reference.html#distribution-transparency`.
 
 Holder perks behaviour and settings: [configuration](./configuration.md#holder-reward-choice), [eligibility](./eligibility.md). Payload examples: web docs `/docs/api-reference.html#holder-perks`.
 

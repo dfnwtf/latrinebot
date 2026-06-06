@@ -96,6 +96,69 @@ export interface PublicStats {
   totalClaimedSol: number;
 }
 
+/** Creator fee split shown on the public token page (hold = remainder). */
+export interface PoolSplit {
+  distributePct: number;
+  burnPct: number;
+  holdPct: number;
+}
+
+/** Public perk / payout flags on the token page banner. */
+export interface PublicFeatures {
+  holderRewardChoice: boolean;
+  socialClaimBoost: boolean;
+  defaultRewardLabel: string;
+  defaultRewardKind: RewardKind | string;
+}
+
+export interface PolicyHistoryEntry {
+  at: Iso;
+  body: string;
+  severity: string | null;
+  time: string;
+}
+
+/** Sticky banner for the latest POLICY event (omitted when older than 48 h). */
+export interface PolicyAlert {
+  at: Iso;
+  body: string;
+  severity: string;
+  ageSec: number;
+}
+
+export interface RealmFeedLine {
+  tag: string;
+  body: string;
+  severity: string | null;
+  at: Iso;
+  time: string;
+}
+
+/** `GET /api/public/realm/:id/live` - token page LIVE payload. */
+export interface RealmLiveResponse {
+  ok: boolean;
+  status: "live" | "idle" | "waiting";
+  stale?: boolean;
+  running: boolean;
+  mode: "LIVE";
+  mint: string;
+  ticker?: string;
+  name?: string;
+  stats: PublicStats;
+  publicStats?: PublicStats;
+  recent: RealmFeedLine[];
+  feedDisplayLimit?: number;
+  lastEvent?: RealmFeedLine | null;
+  updatedAt?: Iso;
+  poolSplit: PoolSplit;
+  publicFeatures: PublicFeatures;
+  policyHistory: PolicyHistoryEntry[];
+  policyAlert?: PolicyAlert | null;
+  meta?: Record<string, unknown>;
+  charter?: Record<string, unknown>;
+  settings?: Partial<ProjectSettings>;
+}
+
 export interface StatsBucket {
   cycles: number;
   totalClaimedSol: number;
