@@ -81,6 +81,10 @@ latrine watch <project-id>
 
 # Eligibility check for any wallet (public, no auth needed)
 latrine eligibility <project-id> <wallet-pubkey>
+
+# Token page LIVE view: split, hold fund, perks (public, no auth)
+latrine live <project-id>
+latrine live <project-id> --json
 ```
 
 ### Authenticated (Bearer JWT)

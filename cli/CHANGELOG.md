@@ -2,6 +2,14 @@
 
 All notable changes to `@latrinebot/cli`.
 
+## [0.4.9] - 2026-06-11
+
+### Added
+- `latrine live <project-id>` - public token page LIVE snapshot: fee split, hold fund transparency, perks, latest policy alert (`--json` for full `RealmLiveResponse`).
+
+### Changed
+- Depends on `@latrinebot/sdk@^0.4.9`.
+
 ## [0.4.7] - 2026-06-05
 
 ### Changed

@@ -13,6 +13,7 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/). 
 ### Changed
 - Documentation: hold fund in `configuration`, `api-reference`, `eligibility`, `terms`, `privacy` (mirrors latrinebot.com).
 - Legal docs updated for hold fund transparency and informational held-SOL disclaimer.
+- `@latrinebot/cli` 0.4.9: `latrine live <project-id>` for public realm LIVE (split, hold fund, perks).
 
 ## [0.4.6] - 2026-06-05
 

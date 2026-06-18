@@ -60,6 +60,72 @@ function fail(message: string, exit = 1): never {
   process.exit(exit);
 }
 
+function formatLiveHuman(live: {
+  status?: string;
+  running?: boolean;
+  ticker?: string;
+  name?: string;
+  poolSplit?: { distributePct?: number; burnPct?: number; holdPct?: number };
+  holdFund?: {
+    mode?: string;
+    purposeLine?: string;
+    heldSol?: number;
+    holdPct?: number;
+    goalSol?: number;
+    showProgress?: boolean;
+    progressPct?: number;
+  };
+  publicFeatures?: {
+    holderRewardChoice?: boolean;
+    socialClaimBoost?: boolean;
+    defaultRewardLabel?: string;
+  };
+  policyAlert?: { body?: string; severity?: string } | null;
+}): string {
+  const lines: string[] = [];
+  const label = [live.ticker ? `$${live.ticker}` : "", live.name ?? ""].filter(Boolean).join(" - ");
+  if (label) lines.push(`Token:   ${label}`);
+  lines.push(`Status:  ${live.status ?? "-"}${live.running ? " (running)" : ""}`);
+
+  const ps = live.poolSplit;
+  if (ps) {
+    lines.push(
+      `Split:   ${ps.distributePct ?? 0}% airdrop / ${ps.burnPct ?? 0}% burn / ${ps.holdPct ?? 0}% hold`,
+    );
+  }
+
+  const hf = live.holdFund;
+  if (hf && (hf.holdPct ?? 0) > 0) {
+    const held = Number(hf.heldSol ?? 0).toFixed(3);
+    let holdLine = `Hold:    ${hf.purposeLine ?? "Creator hold reserve"} - ${held} SOL`;
+    if (hf.showProgress && Number(hf.goalSol) > 0) {
+      holdLine += ` / goal ${Number(hf.goalSol).toFixed(3)} SOL (${Number(hf.progressPct ?? 0).toFixed(1)}%)`;
+    } else if (hf.mode === "simple") {
+      holdLine += " (simple reserve, no public goal card)";
+    }
+    lines.push(holdLine);
+  } else if (ps && (ps.holdPct ?? 0) === 0) {
+    lines.push("Hold:    0% (no reserve slice)");
+  }
+
+  const pf = live.publicFeatures;
+  if (pf) {
+    const perks = [
+      pf.holderRewardChoice ? "holder choice on" : "holder choice off",
+      pf.socialClaimBoost ? "X boost on" : "X boost off",
+      pf.defaultRewardLabel ? `payout ${pf.defaultRewardLabel}` : "",
+    ].filter(Boolean);
+    lines.push(`Perks:   ${perks.join(" | ")}`);
+  }
+
+  if (live.policyAlert?.body) {
+    const sev = live.policyAlert.severity ? ` [${live.policyAlert.severity}]` : "";
+    lines.push(`Policy:  ${live.policyAlert.body}${sev}`);
+  }
+
+  return lines.join("\n");
+}
+
 function HELP(): string {
   return `latrine - thin CLI over the Latrine Bot public API
 
@@ -72,6 +138,7 @@ READ-ONLY (metrics key)
   events       <project-id> [--limit N]    Recent events
   watch        <project-id> [--interval N] Live tail (default 5s)
   eligibility  <project-id> <wallet>       Public eligibility lookup (no auth)
+  live         <project-id>                Token page LIVE payload (split, hold fund, perks)
   reward-options <project-id>              Holder perk options (no auth)
   social-claim <project-id>                X post boost status + template (no auth)
   social-claim claim <project-id>          Claim 1h boost (--url --wallet); one URL per token forever, one active claim per wallet per token
@@ -177,6 +244,12 @@ async function main(): Promise<void> {
       print(args, r, () => (r.eligible
         ? `eligible at tier MC>=${r.tier?.mcUsd}, needs >= ${r.tier?.minTokens} tokens`
         : `not eligible (${r.reason ?? "unknown"})`));
+      return;
+    }
+    case "live": {
+      const id = sub ?? fail("live: missing project id");
+      const r = await c.public.realm.live(id);
+      print(args, r, () => formatLiveHuman(r));
       return;
     }
     case "reward-options": {
