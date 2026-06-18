@@ -9,6 +9,8 @@ Per cycle the engine decides who gets paid. This page explains the math.
 3. **Anti-whale cap.** A wallet must hold at most `maxHolderBalance` (default 20 M = 2 % of fixed 1 B supply). Wallets above the cap are hard-excluded, not capped down.
 4. **Hold cycles.** A wallet must have been in band for the last `holdCycles` consecutive cycles. New buyers wait this many cycles before they start receiving drops.
 
+**Hold cycles vs hold fund:** `holdCycles` in the tier table is an eligibility streak for holders. [Hold fund transparency](./configuration.md#hold-fund-transparency) is separate - it explains the creator's fee-split **hold %** reserve (dashboard / token page / Stream Studio), not wallet eligibility.
+
 Wallets that survive all four filters are **eligible**.
 
 ## Distribution

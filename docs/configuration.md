@@ -76,6 +76,7 @@ When a project owner saves policy-affecting settings (`PATCH` with `settings`), 
 | `rewardAsset` | `Payout currency changed: …` |
 | `holderRewardChoiceEnabled` | enabled / disabled message |
 | `socialClaimEnabled` | X post boost enabled / disabled message |
+| `holdFund` | `Creator hold fund: …` when hold % &gt; 0 (simple reserve or goal + purpose) |
 
 **Where it appears**
 
@@ -89,6 +90,23 @@ When a project owner saves policy-affecting settings (`PATCH` with `settings`), 
 Token page polls about every **20 s**. The dashboard confirms before saving when a public policy change is detected.
 
 Full API: [web configuration](https://latrinebot.com/docs/configuration.html#distribution-transparency), [API reference](https://latrinebot.com/docs/api-reference.html#distribution-transparency).
+
+### Hold fund transparency
+
+When your **Creator fee split** keeps a non-zero **hold** slice, part of each cycle's pooled creator fees stays in the dev wallet as a reserve (`stats.totalHeldSol`). The dashboard block **Hold fund transparency** lets you explain why you keep that slice and, optionally, show progress toward a SOL goal on the token page and [Stream Studio](https://latrinebot.com/docs/stream-studio.html) `hold-vault` overlay.
+
+This is **not** holder **hold cycles** in the tier table. Hold cycles gate eligibility streaks; hold fund is the creator's fee-split reserve counter.
+
+| Dashboard mode | `settings.holdFund` | Token page | Stream Studio |
+|---|---|---|---|
+| **Simple hold** | `{ mode: "simple", template: null, customLabel: "", goalSol: 0 }` | No extra hold card (only hold % in fee split bar). | Compact read-only card: purpose + held SOL + hold %. |
+| **Hold with a goal** | `{ mode: "goal", template, customLabel?, goalSol }` | **Hold fund transparency** card when template is set. | Same data; optional progress when `goalSol > 0`. |
+
+Purpose templates in goal mode: `dex` (Dex Paid), `boost` (Dex Boost Paid), `ad` (Dex Ad Paid), `custom` (your label, max 80 chars). Goal SOL is optional but required for a progress bar.
+
+Only you edit hold fund in the dashboard. Stream Studio and the token page are **read-only**. `heldSol` on `holdFund` is cumulative from the hold-% slice, not pending claim balance.
+
+Full docs: [web configuration](https://latrinebot.com/docs/configuration.html#hold-fund-transparency).
 
 ### Holder reward choice (Holder perk)
 
@@ -180,6 +198,7 @@ Manage them at `/app/projects/:id` -> **Metrics keys**. CRUD on `GET/POST /api/p
   "socialBoostDurationMin": 60,
   "socialHolderBoostMultiplier": 1.15,
   "socialNonHolderWeightRatio": 0.08,
+  "holdFund": { "mode": "simple", "template": null, "customLabel": "", "goalSol": 0 },
   "eligibilityTiers": [
     { "mcUsd":         0, "minTokens": 500000, "holdCycles": 5 },
     { "mcUsd":     50000, "minTokens": 450000, "holdCycles": 6 },

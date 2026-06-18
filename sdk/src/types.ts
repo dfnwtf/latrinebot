@@ -51,6 +51,33 @@ export interface RewardAsset {
   mint: string | null;
 }
 
+export type HoldFundMode = "simple" | "goal";
+
+export type HoldFundTemplate = "dex" | "boost" | "ad" | "custom";
+
+/** Dashboard `settings.holdFund` (normalized server-side). */
+export interface HoldFundSettings {
+  mode: HoldFundMode;
+  template: HoldFundTemplate | null;
+  customLabel: string;
+  goalSol: number;
+}
+
+/** Read-only `holdFund` on `GET /api/public/realm/:id/live`. */
+export interface HoldFundPublic {
+  mode: HoldFundMode;
+  template: HoldFundTemplate | null;
+  label: string;
+  purposeLine: string;
+  customLabel: string;
+  goalSol: number;
+  /** Cumulative hold-% slice from `stats.totalHeldSol`. */
+  heldSol: number;
+  holdPct: number;
+  showProgress: boolean;
+  progressPct: number;
+}
+
 export interface ProjectSettings {
   cycleIntervalSec: number;
   minHolderBalance: number;
@@ -71,6 +98,8 @@ export interface ProjectSettings {
   socialHolderBoostMultiplier?: number;
   /** Virtual weight ratio x tier minTokens for non-holder intro drops (default 0.08). */
   socialNonHolderWeightRatio?: number;
+  /** Hold fund transparency (dashboard only). See HoldFundSettings. */
+  holdFund?: HoldFundSettings;
   eligibilityTiers: EligibilityTier[];
 }
 
@@ -151,6 +180,7 @@ export interface RealmLiveResponse {
   lastEvent?: RealmFeedLine | null;
   updatedAt?: Iso;
   poolSplit: PoolSplit;
+  holdFund: HoldFundPublic;
   publicFeatures: PublicFeatures;
   policyHistory: PolicyHistoryEntry[];
   policyAlert?: PolicyAlert | null;
@@ -184,6 +214,8 @@ export interface StatsBucket {
   lastCycleAt: Iso | null;
   lastClaimAt: Iso | null;
   lastAirdropAt: Iso | null;
+  /** Cumulative SOL reserved from the hold-% fee split slice. */
+  totalHeldSol?: number;
 }
 
 export interface ProjectStats {

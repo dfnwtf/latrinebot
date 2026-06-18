@@ -2,6 +2,14 @@
 
 All notable changes to `@latrinebot/sdk`.
 
+## [0.4.9] - 2026-06-11
+
+### Added
+- `HoldFundSettings`, `HoldFundPublic`, `HoldFundMode`, and `HoldFundTemplate` types.
+- `ProjectSettings.holdFund` and `RealmLiveResponse.holdFund` for creator hold reserve transparency.
+- `StatsBucket.totalHeldSol` - cumulative hold-% slice counter.
+- OpenAPI `HoldFundSettings` / `HoldFundPublic` schemas on realm live and project settings.
+
 ## [0.4.8] - 2026-06-06
 
 ### Added

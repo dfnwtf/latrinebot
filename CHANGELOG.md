@@ -4,6 +4,16 @@ All notable changes to the Latrine Bot service. Dates are production deploys to 
 
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/). This project follows semantic-ish versioning while pre-1.0 - see [README.md](./README.md).
 
+## [0.4.9] - 2026-06-11
+
+### Added
+- **Hold fund transparency** - dashboard `settings.holdFund` (simple vs goal mode, purpose templates, optional SOL goal); public `holdFund` on `GET /api/public/realm/:id/live`; `stats.totalHeldSol` cumulative hold-% counter; Stream Studio `hold-vault` read-only overlay.
+- `@latrinebot/sdk` 0.4.9: `HoldFundSettings`, `HoldFundPublic`, OpenAPI schemas, `ProjectSettings.holdFund`, `RealmLiveResponse.holdFund`.
+
+### Changed
+- Documentation: hold fund in `configuration`, `api-reference`, `eligibility`, `terms`, `privacy` (mirrors latrinebot.com).
+- Legal docs updated for hold fund transparency and informational held-SOL disclaimer.
+
 ## [0.4.6] - 2026-06-05
 
 ### Added

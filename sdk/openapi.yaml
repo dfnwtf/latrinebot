@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Latrine Bot API
-  version: 0.4.8
+  version: 0.4.9
   summary: Cloud automation engine for Pump.fun tokens.
   description: |
     Public HTTP API for [Latrine Bot](https://latrinebot.com). Covers authentication
@@ -604,8 +604,9 @@ paths:
       summary: Per-token public LIVE stats and distribution transparency
       description: |
         Token page payload: public stats, activity log tail, current fee split (`poolSplit`),
-        perk flags (`publicFeatures`), and mandatory policy audit (`policyHistory`, `policyAlert`).
-        Policy rows are appended server-side on `PATCH` settings changes; devs cannot disable logging.
+        hold fund transparency (`holdFund`), perk flags (`publicFeatures`), and mandatory policy audit
+        (`policyHistory`, `policyAlert`). Policy rows are appended server-side on `PATCH` settings changes;
+        devs cannot disable logging.
       security: []
       parameters: [{ $ref: "#/components/parameters/ProjectId" }]
       responses:
@@ -976,6 +977,8 @@ components:
           minimum: 0
           maximum: 0.5
           description: Virtual weight ratio (x tier minTokens) for non-holder intro drops.
+        holdFund:
+          $ref: "#/components/schemas/HoldFundSettings"
         eligibilityTiers:
           type: array
           items: { $ref: "#/components/schemas/EligibilityTier" }
@@ -1021,6 +1024,48 @@ components:
         lastCycleAt: { type: string, format: date-time, nullable: true }
         lastClaimAt: { type: string, format: date-time, nullable: true }
         lastAirdropAt: { type: string, format: date-time, nullable: true }
+        totalHeldSol:
+          type: number
+          description: Cumulative SOL reserved from the hold-% fee split slice (monotonic).
+
+    HoldFundSettings:
+      type: object
+      description: Dashboard-only hold fund transparency config (normalized server-side).
+      properties:
+        mode:
+          type: string
+          enum: [simple, goal]
+          description: "`simple` hides the token-page hold card; `goal` enables purpose + optional progress."
+        template:
+          type: string
+          enum: [dex, boost, ad, custom]
+          nullable: true
+          description: Purpose preset in goal mode (`null` in simple mode).
+        customLabel:
+          type: string
+          maxLength: 80
+          description: Custom purpose text when `template` is `custom`.
+        goalSol:
+          type: number
+          minimum: 0
+          description: Optional SOL goal for progress bar in goal mode.
+
+    HoldFundPublic:
+      type: object
+      description: |
+        Read-only hold reserve on token page, APIs, and Stream Studio `hold-vault` layer.
+        `heldSol` mirrors cumulative `stats.totalHeldSol` (hold-% slice), not pending claim balance.
+      properties:
+        mode: { type: string, enum: [simple, goal] }
+        template: { type: string, enum: [dex, boost, ad, custom], nullable: true }
+        label: { type: string, description: "Resolved purpose label (e.g. Dex Paid)." }
+        purposeLine: { type: string, description: "Display line (e.g. Holding for Dex Paid)." }
+        customLabel: { type: string }
+        goalSol: { type: number }
+        heldSol: { type: number }
+        holdPct: { type: number }
+        showProgress: { type: boolean }
+        progressPct: { type: number }
 
     PublicStats:
       type: object
@@ -1096,6 +1141,7 @@ components:
           items: { $ref: "#/components/schemas/RealmFeedLine" }
         feedDisplayLimit: { type: integer }
         poolSplit: { $ref: "#/components/schemas/PoolSplit" }
+        holdFund: { $ref: "#/components/schemas/HoldFundPublic" }
         publicFeatures: { $ref: "#/components/schemas/PublicFeatures" }
         policyHistory:
           type: array

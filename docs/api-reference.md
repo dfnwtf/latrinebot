@@ -142,7 +142,7 @@ See [metrics API](./metrics-api.md) for full payload shapes.
 | GET/POST | `/api/public/latrine/check-eligibility` | Showcase eligibility (KV snapshot) |
 | GET | `/api/public/ward-roll` | Ward-roll realm listing (`?faces=1` for hero faces) |
 
-**Distribution transparency:** `PATCH /api/projects/:id` with policy settings appends mandatory `POLICY` events (no opt-out). Realm live fields: `poolSplit`, `publicFeatures`, `policyHistory`, `policyAlert`. See [configuration](./configuration.md#public-distribution-transparency) and web docs `/docs/api-reference.html#distribution-transparency`.
+**Distribution transparency:** `PATCH /api/projects/:id` with policy settings appends mandatory `POLICY` events (no opt-out). Realm live fields: `poolSplit`, `holdFund`, `publicFeatures`, `policyHistory`, `policyAlert`. See [configuration](./configuration.md#public-distribution-transparency) and web docs `/docs/api-reference.html#distribution-transparency`.
 
 Holder perks behaviour and settings: [configuration](./configuration.md#holder-reward-choice), [eligibility](./eligibility.md). Payload examples: web docs `/docs/api-reference.html#holder-perks`.
 

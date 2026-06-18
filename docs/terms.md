@@ -1,6 +1,6 @@
 # Terms and Conditions
 
-*Last updated: June 6, 2026*
+*Last updated: June 11, 2026*
 
 Canonical web version: [latrinebot.com/terms.html](https://latrinebot.com/terms.html)
 
@@ -10,7 +10,7 @@ These Terms and Conditions ("Terms") govern your access to and use of the Latrin
 
 Latrine Bot is a software tool that helps token creators automate Pump.fun creator-fee workflows (claim, buyback, holder airdrops) on Solana mainnet. The public dashboard runs live on-chain cycles only.
 
-LIVE projects receive a public token page that shows live stats, an activity log, current fee split, optional holder perks (reward currency choice, X post boost), and a permanent public record when you change distribution or related settings. See section 4.
+LIVE projects receive a public token page that shows live stats, an activity log, current fee split, optional holder perks (reward currency choice, X post boost), optional hold fund transparency when you configure a public goal, and a permanent public record when you change distribution or related settings. See section 4.
 
 We may change, suspend, or discontinue any part of the Service at any time, with or without notice.
 
@@ -26,7 +26,7 @@ We may change, suspend, or discontinue any part of the Service at any time, with
 - **Configuration.** You configure mint, tiers, thresholds, modes, and schedules. You are responsible for reviewing settings before LIVE mode.
 - **Third-party infrastructure.** The Service relies on Solana, Pump.fun, RPC providers (such as Helius, which you may supply), DexScreener, and other third parties. Their availability, fees, and terms are outside our control.
 - **No advice.** Nothing on the Service is financial, legal, or tax advice. Token launches, airdrops, and trading involve substantial risk, including total loss of funds.
-- **Public transparency.** When you save LIVE policy settings (fee split, default reward asset, holder reward choice, X post boost), the Service appends public `POLICY` events. You cannot disable this audit log or the platform rules for major holder cuts (for example a drop of 20 percentage points or more, or to 0%). Holders may rely on the public token page and APIs; you are responsible for settings you choose and for how you communicate with your community.
+- **Public transparency.** When you save LIVE policy settings (fee split, default reward asset, holder reward choice, X post boost, hold fund transparency), the Service appends public `POLICY` events. You cannot disable this audit log or the platform rules for major holder cuts (for example a drop of 20 percentage points or more, or to 0%). Holders may rely on the public token page and APIs; you are responsible for settings you choose and for how you communicate with your community.
 - **Holder perks.** If you enable holder reward choice or X post boost, eligible holders interact via public endpoints (wallet checks, Sign-In With Solana where required, and tweet verification for boost). You configure whether those perks are on; holders choose whether to use them.
 
 ## 4. Public transparency (mandatory for LIVE)
@@ -34,11 +34,12 @@ We may change, suspend, or discontinue any part of the Service at any time, with
 For LIVE mode projects, the Service maintains and displays:
 
 - Current fee split (airdrop / burn / hold), default payout, and enabled perks on the token page.
+- Optional **hold fund transparency** when you choose **Hold with a goal** in the dashboard: a public purpose label (preset or custom), cumulative held SOL from your hold % slice, and an optional SOL goal with progress. Simple hold (no public goal) does not show this card on the token page; Stream Studio may still show a read-only reserve amount if you enable that overlay layer.
 - A sticky notice with the latest policy change until you save a newer one.
 - A sidebar **Distribution history** of past policy changes (stored in a dedicated audit table, separate from cycle spam in the activity log).
 - Highlighted `POLICY` lines in the public activity log and dashboard Output.
 
-These records are intentional, permanent for the life of the project (subject to operational retention limits described in our [Privacy Policy](./privacy.md)), and not optional for creators. By using LIVE mode you consent to this transparency.
+These records are intentional, permanent for the life of the project (subject to operational retention limits described in our [Privacy Policy](./privacy.md)), and not optional for creators. Held SOL figures and progress bars are informational counters based on your configured hold % and platform stats; they are not a guarantee of how you will spend funds off-platform. By using LIVE mode you consent to this transparency.
 
 ## 5. Fees and payments
 

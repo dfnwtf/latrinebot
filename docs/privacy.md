@@ -1,6 +1,6 @@
 # Privacy Policy
 
-*Last updated: June 6, 2026*
+*Last updated: June 11, 2026*
 
 Canonical web version: [latrinebot.com/privacy.html](https://latrinebot.com/privacy.html)
 
@@ -11,7 +11,7 @@ This Privacy Policy explains how Latrine Bot ("we", "us") collects, uses, and sh
 ### Information you provide
 
 - **Wallet address** used to sign in (Sign-In With Solana).
-- **Project settings** such as project name, token mint (contract address), tiers, thresholds, and cycle parameters for mainnet LIVE automation.
+- **Project settings** such as project name, token mint (contract address), tiers, thresholds, cycle parameters for mainnet LIVE automation, and optional hold fund transparency (purpose label, goal SOL, simple vs goal mode).
 - **Secrets you store in the dashboard** - dev wallet private key and RPC URL (including API keys embedded in the URL). These are encrypted at rest on our servers and are not shown in full after save. See [Security](./security.md).
 - **Metrics API keys** you generate for read-only access to project stats and events.
 - **Messages on X** if you contact us via our official account.
@@ -20,7 +20,7 @@ This Privacy Policy explains how Latrine Bot ("we", "us") collects, uses, and sh
 ### Information collected automatically
 
 - **Usage and logs** - requests to our API, dashboard actions, bot cycle events, errors, and timestamps stored in our database for operations and your project history.
-- **Public policy audit** - when a LIVE creator changes fee split, default reward asset, or certain perks, we store `POLICY` lines in a dedicated audit table and expose them on the public token page, APIs, and activity log (mandatory transparency).
+- **Public policy audit** - when a LIVE creator changes fee split, default reward asset, certain perks, or hold fund transparency settings, we store `POLICY` lines in a dedicated audit table and expose them on the public token page, APIs, and activity log (mandatory transparency).
 - **On-chain and public data** - token balances, holder snapshots, market data, and transaction results obtained via Solana RPC and public APIs (for example DexScreener) to run the Service.
 - **Technical data** - IP address, browser type, and similar data in server and CDN logs (see hosting below).
 - **Cookies** - session cookie for dashboard login (JWT). We do not use third-party advertising cookies on the core Service.
@@ -41,7 +41,7 @@ We do not sell your personal information. We may share data only as follows:
 - **Blockchain networks** - transactions you authorize are public on Solana and visible to anyone.
 - **RPC and data APIs** - requests you configure (for example to Helius or DexScreener) are sent to those providers under their privacy policies.
 - **Metrics API consumers** - anyone with a valid metrics key can read project metrics and events you expose; treat keys like passwords.
-- **Public token pages and APIs** - LIVE project stats, fee split, perk flags, policy history, activity log tail, eligibility checks, and (where enabled) holder reward preferences readable by wallet are visible to anyone without login. Do not use the Service for sensitive personal data you do not want public.
+- **Public token pages and APIs** - LIVE project stats, fee split, perk flags, policy history, activity log tail, eligibility checks, optional hold fund transparency (purpose, cumulative held SOL, goal progress when goal mode is enabled), and (where enabled) holder reward preferences readable by wallet are visible to anyone without login. Do not use the Service for sensitive personal data you do not want public.
 - **Legal** - if required by law, court order, or to protect users and the Service.
 - **Business transfers** - in connection with a merger, acquisition, or asset sale, with notice where required.
 

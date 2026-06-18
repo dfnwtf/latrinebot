@@ -48,7 +48,7 @@ The dashboard's Start button only unlocks when every `Required: yes` check is gr
 
 ## Public distribution transparency
 
-Fee split, default payout, and public perk toggles are visible on the token page. When the project owner saves a change, the API appends `POLICY` events to the public activity log, dashboard Output, and a dedicated policy audit table (`policyHistory` / `policyAlert` on the token page).
+Fee split, default payout, public perk toggles, and hold fund transparency are visible on the token page (hold fund card only in goal mode). When the project owner saves a change, the API appends `POLICY` events to the public activity log, dashboard Output, and a dedicated policy audit table (`policyHistory` / `policyAlert` on the token page).
 
 This is **mandatory and server-enforced**. There is no project setting to disable logging, customize major-cut thresholds, or delete policy lines through the dev dashboard. Policy history is retained separately from trimmed cycle events. Only unrelated operator tools (for example social-boost claim moderation) exist outside normal project owner APIs.
 

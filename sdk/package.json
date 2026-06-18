@@ -1,6 +1,6 @@
 {
   "name": "@latrinebot/sdk",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "description": "TypeScript client and OpenAPI 3.1 spec for the Latrine Bot public API.",
   "license": "MIT",
   "author": "dfnwtf",
