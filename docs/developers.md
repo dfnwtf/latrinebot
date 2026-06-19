@@ -108,6 +108,7 @@ latrine status      <project-id>
 latrine events      <project-id> --limit 20
 latrine watch       <project-id>
 latrine eligibility <project-id> <wallet>
+latrine live        <project-id>
 
 # Authenticated
 latrine preflight   <project-id>
