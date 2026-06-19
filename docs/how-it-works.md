@@ -5,19 +5,35 @@ Latrine Bot turns three on-chain actions into one continuous loop and runs them 
 ## The cycle
 
 ```
-   +-----------+      +-----------+      +-----------+
-   |  CLAIM    | ---> |  BUYBACK  | ---> |  AIRDROP  |
-   +-----------+      +-----------+      +-----------+
-        ^                                       |
-        |                                       v
-        +-------------- WAIT --------------------+
-                  (cycle interval)
+   +--------+     +------------------ fee pool (pending + claim) ------------------+
+   | CLAIM  | --> | split: distribute % | burn % | hold % (after tx fee estimate) |
+   +--------+     +----------+----------+--------+--------------------------------+
+                         |          |          |
+                         v          v          v
+                    +---------+ +--------+ +----------+
+                    | ACQUIRE | | BURN   | | HOLD     |
+                    | reward  | | track  | | reserve  |
+                    +----+----+ +--------+ +----------+
+                         |
+                         v
+                    +---------+
+                    | AIRDROP |
+                    +----+----+
+                         |
+                         v
+                    WAIT (cycle interval)
 ```
 
-1. **Claim.** The engine claims the creator fees that piled up on your Pump.fun token (or PumpSwap, if the token has graduated). The SOL lands in your dev wallet.
-2. **Acquire the reward.** After reserving enough SOL to cover the next airdrop (transaction fees, token-account rents, plus a small buffer), the engine turns the rest of the claim into the chosen [reward asset](./configuration.md#reward-asset-what-holders-receive): a market **buyback** of your token (default), a **Jupiter swap** to USDC or any SPL mint, or **nothing** when the reward is plain SOL.
-3. **Airdrop.** The reward is split among eligible holders by their balance share. SPL tokens go out as batched transfers; SOL rewards use native transfers. Whales above the cap and wallets that have not held long enough are excluded.
-4. **Wait.** The scheduler sleeps for the configured cycle interval, then starts over.
+1. **Claim.** The engine claims creator fees from Pump.fun (or PumpSwap after graduation). SOL lands in the dev wallet and joins any rolled-over pending pool.
+2. **Fee pool.** Pending fees plus this claim form the pool. Estimated transaction fees (claim, acquire, airdrop, optional burn track) are subtracted first.
+3. **Split.** The pool after fees is divided by your dashboard percents: **Rewards to distribute %** (`buybackPercent`), **Burn %** (`burnPercent`), and **hold %** (remainder up to 100%). See [configuration](./configuration.md).
+4. **Burn track (optional).** When burn % is above zero, that slice buys the **project token** and **100% of those tokens are SPL-burned**. Separate from the distribute track; works with any reward asset setting.
+5. **Distribute track.** The distribute slice acquires the chosen [reward asset](./configuration.md#reward-asset-what-holders-receive): project-token buyback, Jupiter swap to USDC or a custom mint, or plain SOL.
+6. **Hold slice.** The hold remainder stays in the dev wallet and increments `totalHeldSol`. Optional [hold fund transparency](./configuration.md#hold-fund-transparency) on the token page and Stream Studio.
+7. **Airdrop.** The acquired reward is split among eligible holders by balance share (optional holder perks and X post boost - see configuration). SPL batched transfers; SOL native transfers.
+8. **Wait.** The scheduler sleeps for the configured interval, then repeats.
+
+**Hold cycles** in the tier table (anti-sybil streak) are not the same as fee-split **hold %** or hold fund transparency. See [eligibility](./eligibility.md).
 
 Eligibility is always measured on your project token - holders qualify on what they hold, regardless of which asset the bot distributes.
 
