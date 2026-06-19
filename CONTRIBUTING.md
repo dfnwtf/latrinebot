@@ -13,6 +13,8 @@ cli/           @latrinebot/cli - CLI over the public API (MIT)
 CHANGELOG.md   Service-level changelog
 ```
 
+**Private operator repo** (`4B-saas/` on maintainer machines) holds the engine, API worker, and web app. It is not this git repo. When the service changes, maintainers sync OpenAPI, markdown here, and npm packages from that workspace. See `AGENTS.md` and `docs/internal/DOCS-SYNC.md` there.
+
 Each package has its own `CHANGELOG.md` with per-package versions.
 
 ## Small fixes

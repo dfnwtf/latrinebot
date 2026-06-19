@@ -13,7 +13,7 @@ Nothing runs on your machine. You connect a wallet, configure rules in a dashboa
 
 - [How it works](./how-it-works.md) - one page on the full cycle, with diagrams
 - [Getting started](./getting-started.md) - account, project, mint, preflight, Start
-- [Configuration](./configuration.md) - every setting in the dashboard, holder perk, X post boost
+- [Configuration](./configuration.md) - every setting in the dashboard, hold fund, holder perk, X post boost
 - [Modes](./modes.md) - LIVE-only client model and what that means
 
 ## Build on top
