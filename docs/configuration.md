@@ -105,7 +105,7 @@ This is **not** holder **hold cycles** in the tier table. Hold cycles gate eligi
 
 Purpose templates in goal mode: `dex` (Dex Paid), `boost` (Dex Boost Paid), `ad` (Dex Ad Paid), `custom` (your label, max 80 chars). Goal SOL is optional but required for a progress bar.
 
-**Dex Vault** (API `mode: "guaranteed"`): irreversible after **Activate Dex Vault**. Hold slice routes to a per-project vault until Bags pays DexScreener Enhanced Token Info (~$299). Dev cannot spend vault funds. Dashboard routes: `POST /api/projects/:id/hold-fund/guaranteed/{upload,preflight,draft,reset,enable}`. Public prefill images: `GET /api/public/hold-fund/:projectId/{icon,header}`.
+**Dex Vault** (API `mode: "guaranteed"`): irreversible after **Activate Dex Vault**. Hold slice routes to a per-project vault until Latrine pays DexScreener Enhanced Token Info (~$299). Dev cannot spend vault funds. Dashboard routes: `POST /api/projects/:id/hold-fund/guaranteed/{upload,preflight,draft,reset,enable}`. Public prefill images: `GET /api/public/hold-fund/:projectId/{icon,header}`.
 
 Only you edit hold fund in the dashboard. Stream Studio and the token page are **read-only**. In simple/goal mode `holdFund.heldSol` mirrors `stats.totalHeldSol` on the dev wallet. In Dex Vault mode `holdFund.heldSol` mirrors on-chain vault balance.
 

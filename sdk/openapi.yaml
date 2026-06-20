@@ -649,7 +649,7 @@ paths:
         schema: { type: string, format: uuid }
     get:
       tags: [hold-fund]
-      summary: Public Dex Prefill icon (Bags / DexScreener fetch)
+      summary: Public Dex Prefill icon (DexScreener fetch)
       responses:
         "200":
           description: PNG image
@@ -1185,7 +1185,7 @@ components:
 
     GuaranteedMeta:
       type: object
-      description: Dex Prefill metadata for DexScreener Enhanced Token Info (Bags.fm order).
+      description: Dex Prefill metadata for DexScreener Enhanced Token Info.
       properties:
         description: { type: string, maxLength: 180 }
         iconUrl: { type: string, format: uri }
@@ -1248,7 +1248,7 @@ components:
           enum: [accumulating, ready, paying, submitted, approved, failed, completed]
         displayGoalUsd: { type: number, description: "Display goal (~299 USD)." }
         vaultBalanceSol: { type: number, description: On-chain vault balance tracked by the bot }
-        targetSol: { type: number, description: Quoted SOL target from Bags.fm for Dex payment }
+        targetSol: { type: number, description: Quoted SOL target for Dex payment }
         completedAt: { type: string, format: date-time, nullable: true }
 
     HoldFundGuaranteedPublic:

@@ -52,7 +52,7 @@ Fee split, default payout, public perk toggles, and hold fund transparency are v
 
 ### Dex Vault
 
-When you activate **Dex Vault**, the service generates a per-project vault wallet and stores its private key encrypted (same approach as dev wallet secrets). Only the worker signs vault transfers during LIVE cycles and Dex payment. The vault public key and balance are public on the token page and APIs. Dex Prefill images are stored in object storage and served at public URLs for Bags.fm / DexScreener order creation.
+When you activate **Dex Vault**, the service generates a per-project vault wallet and stores its private key encrypted (same approach as dev wallet secrets). Only the worker signs vault transfers during LIVE cycles and Dex payment. The vault public key and balance are public on the token page and APIs. Dex Prefill images are stored in object storage and served at public URLs for DexScreener order creation.
 
 This is **mandatory and server-enforced**. There is no project setting to disable logging, customize major-cut thresholds, or delete policy lines through the dev dashboard. Policy history is retained separately from trimmed cycle events. Only unrelated operator tools (for example social-boost claim moderation) exist outside normal project owner APIs.
 

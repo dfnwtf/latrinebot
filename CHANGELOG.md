@@ -7,7 +7,7 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/). 
 ## [0.5.0] - 2026-06-19
 
 ### Added
-- **Dex Vault** (`holdFund.mode: "guaranteed"`) - irreversible escrow for DexScreener Enhanced Token Info (~$299 via Bags.fm). Hold % routes to per-project vault; automatic payment when target is reached.
+- **Dex Vault** (`holdFund.mode: "guaranteed"`) - irreversible escrow for DexScreener Enhanced Token Info (~$299). Hold % routes to per-project vault; automatic payment when target is reached.
 - Dashboard session routes: `POST /api/projects/:id/hold-fund/guaranteed/{upload,preflight,draft,reset,enable}`.
 - Public Dex Prefill assets: `GET /api/public/hold-fund/:projectId/{icon,header}`.
 - Public `holdFund.guaranteed` on realm live (vault pubkey, execution status, vault balance as `heldSol`).
