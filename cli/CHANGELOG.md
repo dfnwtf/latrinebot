@@ -2,6 +2,11 @@
 
 All notable changes to `@latrinebot/cli`.
 
+## [0.5.0] - 2026-06-19
+
+### Changed
+- Depends on `@latrinebot/sdk@^0.5.0` (Dex Vault types on `RealmLiveResponse.holdFund`).
+
 ## [0.4.9] - 2026-06-11
 
 ### Added

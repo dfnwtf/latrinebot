@@ -51,9 +51,69 @@ export interface RewardAsset {
   mint: string | null;
 }
 
-export type HoldFundMode = "simple" | "goal";
+export type HoldFundMode = "simple" | "goal" | "guaranteed";
 
 export type HoldFundTemplate = "dex" | "boost" | "ad" | "custom";
+
+export type GuaranteedPreflightStatus = "draft" | "valid" | "locked";
+
+export type GuaranteedExecutionStatus =
+  | "accumulating"
+  | "ready"
+  | "paying"
+  | "submitted"
+  | "approved"
+  | "failed"
+  | "completed";
+
+export interface GuaranteedMeta {
+  description: string;
+  iconUrl: string;
+  headerUrl: string;
+  websiteUrl: string;
+  social: { twitter?: string; telegram?: string; discord?: string };
+  links: { url: string; label: string }[];
+}
+
+export interface GuaranteedDexDraft {
+  meta: GuaranteedMeta;
+  preflightStatus: GuaranteedPreflightStatus;
+  validatedAt: string | null;
+}
+
+export interface GuaranteedPreflightResult {
+  ok: boolean;
+  preflightStatus: GuaranteedPreflightStatus;
+  errors: { code: string; message: string }[];
+  warnings: { code: string; message: string }[];
+  meta: GuaranteedMeta;
+}
+
+/** Server-owned Dex Vault state under `settings.holdFund.guaranteed`. */
+export interface HoldFundGuaranteedSettings {
+  enabledAt: string | null;
+  holdPctAtLock: number;
+  vaultPubkey: string | null;
+  preflightStatus: GuaranteedPreflightStatus;
+  executionStatus: GuaranteedExecutionStatus;
+  displayGoalUsd: number;
+  vaultBalanceSol: number;
+  targetSol: number;
+  completedAt: string | null;
+}
+
+/** Public Dex Vault summary on realm live `holdFund.guaranteed`. */
+export interface HoldFundGuaranteedPublic {
+  active: boolean;
+  completed: boolean;
+  vaultPubkey: string | null;
+  executionStatus: GuaranteedExecutionStatus;
+  executionStatusLabel: string;
+  displayGoalUsd: number;
+  targetSol: number;
+  enabledAt: string | null;
+  completedAt: string | null;
+}
 
 /** Dashboard `settings.holdFund` (normalized server-side). */
 export interface HoldFundSettings {
@@ -61,6 +121,7 @@ export interface HoldFundSettings {
   template: HoldFundTemplate | null;
   customLabel: string;
   goalSol: number;
+  guaranteed?: HoldFundGuaranteedSettings | null;
 }
 
 /** Read-only `holdFund` on `GET /api/public/realm/:id/live`. */
@@ -69,13 +130,25 @@ export interface HoldFundPublic {
   template: HoldFundTemplate | null;
   label: string;
   purposeLine: string;
+  /** Compact line for Stream Studio (Dex Vault mode). */
+  purposeLineShort?: string;
   customLabel: string;
   goalSol: number;
-  /** Cumulative hold-% slice from `stats.totalHeldSol`. */
+  /** Display USD goal (~299) in Dex Vault mode. */
+  goalUsd?: number;
+  /** Quoted SOL payment target in Dex Vault mode. */
+  targetSol?: number;
+  /** Goal row text (e.g. Target: 1.234 SOL). */
+  progressGoalLine?: string;
+  /**
+   * Simple/goal: cumulative hold-% slice from `stats.totalHeldSol` on dev wallet.
+   * Dex Vault: on-chain vault balance (`vaultBalanceSol`).
+   */
   heldSol: number;
   holdPct: number;
   showProgress: boolean;
   progressPct: number;
+  guaranteed?: HoldFundGuaranteedPublic | null;
 }
 
 export interface ProjectSettings {
@@ -100,6 +173,8 @@ export interface ProjectSettings {
   socialNonHolderWeightRatio?: number;
   /** Hold fund transparency (dashboard only). See HoldFundSettings. */
   holdFund?: HoldFundSettings;
+  /** Dex Prefill draft before Dex Vault activation. Cleared on enable. */
+  guaranteedDexDraft?: GuaranteedDexDraft | null;
   eligibilityTiers: EligibilityTier[];
 }
 

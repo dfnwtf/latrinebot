@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Latrine Bot API
-  version: 0.4.9
+  version: 0.5.0
   summary: Cloud automation engine for Pump.fun tokens.
   description: |
     Public HTTP API for [Latrine Bot](https://latrinebot.com). Covers authentication
@@ -29,6 +29,7 @@ tags:
   - name: lifecycle
   - name: widgets
   - name: share-card
+  - name: hold-fund
   - name: metrics-keys
   - name: metrics
   - name: public
@@ -526,6 +527,152 @@ paths:
       responses:
         "204": { description: no content }
 
+  /api/projects/{id}/hold-fund/guaranteed/enable:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    post:
+      tags: [hold-fund]
+      summary: Activate Dex Vault (irreversible)
+      description: |
+        Locks Dex Prefill metadata, generates a per-project vault keypair (encrypted server-side),
+        sets `settings.holdFund.mode` to `guaranteed`, clears `guaranteedDexDraft`, and appends a public `POLICY` line.
+        Requires a valid preflight draft and hold % above zero.
+      responses:
+        "200":
+          description: activated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  vaultPubkey: { type: string, description: On-chain vault wallet public key }
+                  project: { $ref: "#/components/schemas/Project" }
+
+  /api/projects/{id}/hold-fund/guaranteed/upload:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    post:
+      tags: [hold-fund]
+      summary: Upload Dex Prefill image (icon or header)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [kind, file]
+              properties:
+                kind:
+                  type: string
+                  enum: [icon, header]
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: stored in R2
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  kind: { type: string }
+                  url: { type: string, format: uri }
+                  width: { type: integer }
+                  height: { type: integer }
+
+  /api/projects/{id}/hold-fund/guaranteed/preflight:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    post:
+      tags: [hold-fund]
+      summary: Validate Dex Prefill metadata
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                meta: { $ref: "#/components/schemas/GuaranteedMeta" }
+      responses:
+        "200":
+          description: validation result
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/GuaranteedPreflightResult" }
+
+  /api/projects/{id}/hold-fund/guaranteed/draft:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    post:
+      tags: [hold-fund]
+      summary: Save Dex Prefill draft
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/GuaranteedDexDraft" }
+      responses:
+        "200":
+          description: saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  guaranteedDexDraft: { $ref: "#/components/schemas/GuaranteedDexDraft" }
+                  project: { $ref: "#/components/schemas/Project" }
+
+  /api/projects/{id}/hold-fund/guaranteed/reset:
+    parameters: [{ $ref: "#/components/parameters/ProjectId" }]
+    post:
+      tags: [hold-fund]
+      summary: Clear Dex Prefill draft and uploaded images
+      description: Dashboard-only. Clears `guaranteedDexDraft` and R2 prefill assets before activation. Not available after Dex Vault is locked.
+      responses:
+        "200":
+          description: cleared
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok: { type: boolean }
+                  guaranteedDexDraft: { type: "null" }
+                  project: { $ref: "#/components/schemas/Project" }
+
+  /api/public/hold-fund/{projectId}/icon:
+    parameters:
+      - in: path
+        name: projectId
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [hold-fund]
+      summary: Public Dex Prefill icon (Bags / DexScreener fetch)
+      responses:
+        "200":
+          description: PNG image
+          content:
+            image/png:
+              schema: { type: string, format: binary }
+
+  /api/public/hold-fund/{projectId}/header:
+    parameters:
+      - in: path
+        name: projectId
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [hold-fund]
+      summary: Public Dex Prefill header image
+      responses:
+        "200":
+          description: PNG image
+          content:
+            image/png:
+              schema: { type: string, format: binary }
+
   /api/v1/projects/{id}/metrics:
     parameters: [{ $ref: "#/components/parameters/ProjectId" }]
     get:
@@ -979,6 +1126,11 @@ components:
           description: Virtual weight ratio (x tier minTokens) for non-holder intro drops.
         holdFund:
           $ref: "#/components/schemas/HoldFundSettings"
+        guaranteedDexDraft:
+          allOf:
+            - $ref: "#/components/schemas/GuaranteedDexDraft"
+          nullable: true
+          description: Dashboard Dex Prefill draft before activation. Cleared on enable.
         eligibilityTiers:
           type: array
           items: { $ref: "#/components/schemas/EligibilityTier" }
@@ -1026,21 +1178,108 @@ components:
         lastAirdropAt: { type: string, format: date-time, nullable: true }
         totalHeldSol:
           type: number
-          description: Cumulative SOL reserved from the hold-% fee split slice (monotonic).
+          description: |
+            Cumulative SOL reserved from the hold-% fee split slice on the dev wallet (monotonic).
+            When Dex Vault (`holdFund.mode === "guaranteed"`) is active, new hold slices route to the vault;
+            public `holdFund.heldSol` then mirrors `vaultBalanceSol` instead.
+
+    GuaranteedMeta:
+      type: object
+      description: Dex Prefill metadata for DexScreener Enhanced Token Info (Bags.fm order).
+      properties:
+        description: { type: string, maxLength: 180 }
+        iconUrl: { type: string, format: uri }
+        headerUrl: { type: string, format: uri }
+        websiteUrl: { type: string, format: uri }
+        social:
+          type: object
+          properties:
+            twitter: { type: string, format: uri }
+            telegram: { type: string, format: uri }
+            discord: { type: string, format: uri }
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url: { type: string, format: uri }
+              label: { type: string }
+
+    GuaranteedDexDraft:
+      type: object
+      properties:
+        meta: { $ref: "#/components/schemas/GuaranteedMeta" }
+        preflightStatus:
+          type: string
+          enum: [draft, valid, locked]
+        validatedAt: { type: string, format: date-time, nullable: true }
+
+    GuaranteedPreflightResult:
+      type: object
+      properties:
+        ok: { type: boolean }
+        preflightStatus: { type: string, enum: [draft, valid, locked] }
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code: { type: string }
+              message: { type: string }
+        warnings:
+          type: array
+          items:
+            type: object
+            properties:
+              code: { type: string }
+              message: { type: string }
+        meta: { $ref: "#/components/schemas/GuaranteedMeta" }
+
+    HoldFundGuaranteedSettings:
+      type: object
+      description: Server-owned Dex Vault state under `settings.holdFund.guaranteed` after activation.
+      properties:
+        enabledAt: { type: string, format: date-time, nullable: true }
+        holdPctAtLock: { type: integer }
+        vaultPubkey: { type: string, nullable: true }
+        preflightStatus: { type: string, enum: [draft, valid, locked] }
+        executionStatus:
+          type: string
+          enum: [accumulating, ready, paying, submitted, approved, failed, completed]
+        displayGoalUsd: { type: number, description: "Display goal (~299 USD)." }
+        vaultBalanceSol: { type: number, description: On-chain vault balance tracked by the bot }
+        targetSol: { type: number, description: Quoted SOL target from Bags.fm for Dex payment }
+        completedAt: { type: string, format: date-time, nullable: true }
+
+    HoldFundGuaranteedPublic:
+      type: object
+      description: Dex Vault execution summary on public `holdFund.guaranteed`.
+      properties:
+        active: { type: boolean }
+        completed: { type: boolean }
+        vaultPubkey: { type: string, nullable: true }
+        executionStatus:
+          type: string
+          enum: [accumulating, ready, paying, submitted, approved, failed, completed]
+        executionStatusLabel: { type: string, description: "e.g. Accumulating, Ready to pay Dex" }
+        displayGoalUsd: { type: number }
+        targetSol: { type: number }
+        enabledAt: { type: string, format: date-time, nullable: true }
+        completedAt: { type: string, format: date-time, nullable: true }
 
     HoldFundSettings:
       type: object
-      description: Dashboard-only hold fund transparency config (normalized server-side).
+      description: Dashboard hold fund transparency config (normalized server-side).
       properties:
         mode:
           type: string
-          enum: [simple, goal]
-          description: "`simple` hides the token-page hold card; `goal` enables purpose + optional progress."
+          enum: [simple, goal, guaranteed]
+          description: "`simple` hides token-page hold card; `goal` enables purpose + optional SOL goal; `guaranteed` is Dex Vault (irreversible after enable)."
         template:
           type: string
           enum: [dex, boost, ad, custom]
           nullable: true
-          description: Purpose preset in goal mode (`null` in simple mode).
+          description: Purpose preset in goal mode (`null` in simple / guaranteed modes).
         customLabel:
           type: string
           maxLength: 80
@@ -1049,23 +1288,37 @@ components:
           type: number
           minimum: 0
           description: Optional SOL goal for progress bar in goal mode.
+        guaranteed:
+          allOf:
+            - $ref: "#/components/schemas/HoldFundGuaranteedSettings"
+          nullable: true
+          description: Present when `mode` is `guaranteed`.
 
     HoldFundPublic:
       type: object
       description: |
         Read-only hold reserve on token page, APIs, and Stream Studio `hold-vault` layer.
-        `heldSol` mirrors cumulative `stats.totalHeldSol` (hold-% slice), not pending claim balance.
+        In simple/goal mode `heldSol` mirrors cumulative `stats.totalHeldSol` on the dev wallet.
+        In Dex Vault mode `heldSol` mirrors on-chain `vaultBalanceSol`; dev cannot spend vault funds.
       properties:
-        mode: { type: string, enum: [simple, goal] }
+        mode: { type: string, enum: [simple, goal, guaranteed] }
         template: { type: string, enum: [dex, boost, ad, custom], nullable: true }
-        label: { type: string, description: "Resolved purpose label (e.g. Dex Paid)." }
-        purposeLine: { type: string, description: "Display line (e.g. Holding for Dex Paid)." }
+        label: { type: string, description: "Resolved label (e.g. Dex Paid, Dex Vault)." }
+        purposeLine: { type: string, description: "Token-page line (longer in Dex Vault mode)." }
+        purposeLineShort: { type: string, description: "Compact Stream Studio line (Dex Vault mode)." }
         customLabel: { type: string }
-        goalSol: { type: number }
+        goalSol: { type: number, description: "SOL goal in goal mode; 0 in Dex Vault mode." }
+        goalUsd: { type: number, description: "Display USD goal (~299) in Dex Vault mode." }
+        targetSol: { type: number, description: "Quoted SOL payment target in Dex Vault mode." }
+        progressGoalLine: { type: string, description: "Goal row text (e.g. Target: 1.234 SOL or Goal: $299)." }
         heldSol: { type: number }
         holdPct: { type: number }
         showProgress: { type: boolean }
         progressPct: { type: number }
+        guaranteed:
+          allOf:
+            - $ref: "#/components/schemas/HoldFundGuaranteedPublic"
+          nullable: true
 
     PublicStats:
       type: object

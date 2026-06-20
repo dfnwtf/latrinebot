@@ -76,7 +76,7 @@ When a project owner saves policy-affecting settings (`PATCH` with `settings`), 
 | `rewardAsset` | `Payout currency changed: …` |
 | `holderRewardChoiceEnabled` | enabled / disabled message |
 | `socialClaimEnabled` | X post boost enabled / disabled message |
-| `holdFund` | `Creator hold fund: …` when hold % &gt; 0 (simple reserve or goal + purpose) |
+| `holdFund` | `Creator hold fund: …` when hold % &gt; 0 (simple reserve, goal + purpose, or Dex Vault selected/active) |
 
 **Where it appears**
 
@@ -93,7 +93,7 @@ Full API: [web configuration](https://latrinebot.com/docs/configuration.html#dis
 
 ### Hold fund transparency
 
-When your **Creator fee split** keeps a non-zero **hold** slice, part of each cycle's pooled creator fees stays in the dev wallet as a reserve (`stats.totalHeldSol`). The dashboard block **Hold fund transparency** lets you explain why you keep that slice and, optionally, show progress toward a SOL goal on the token page and [Stream Studio](https://latrinebot.com/docs/stream-studio.html) `hold-vault` overlay.
+When your **Creator fee split** keeps a non-zero **hold** slice, part of each cycle's pooled creator fees is reserved for your hold fund. In **simple** and **goal** modes the reserve stays on the dev wallet (`stats.totalHeldSol`). In **Dex Vault** mode hold fees transfer to a per-project vault each cycle until DexScreener is paid. The dashboard block **Hold fund transparency** lets you explain why you keep that slice and, optionally, show progress toward a SOL goal or Dex payment on the token page and [Stream Studio](https://latrinebot.com/docs/stream-studio.html) `hold-vault` overlay.
 
 This is **not** holder **hold cycles** in the tier table. Hold cycles gate eligibility streaks; hold fund is the creator's fee-split reserve counter.
 
@@ -101,10 +101,13 @@ This is **not** holder **hold cycles** in the tier table. Hold cycles gate eligi
 |---|---|---|---|
 | **Simple hold** | `{ mode: "simple", template: null, customLabel: "", goalSol: 0 }` | No extra hold card (only hold % in fee split bar). | Compact read-only card: purpose + held SOL + hold %. |
 | **Hold with a goal** | `{ mode: "goal", template, customLabel?, goalSol }` | **Hold fund transparency** card when template is set. | Same data; optional progress when `goalSol > 0`. |
+| **Dex Vault** | `{ mode: "guaranteed", guaranteed: { … } }` | **Dex Vault** card with full `purposeLine`. | Short `purposeLineShort` + status `Accumulating`. |
 
 Purpose templates in goal mode: `dex` (Dex Paid), `boost` (Dex Boost Paid), `ad` (Dex Ad Paid), `custom` (your label, max 80 chars). Goal SOL is optional but required for a progress bar.
 
-Only you edit hold fund in the dashboard. Stream Studio and the token page are **read-only**. `heldSol` on `holdFund` is cumulative from the hold-% slice, not pending claim balance.
+**Dex Vault** (API `mode: "guaranteed"`): irreversible after **Activate Dex Vault**. Hold slice routes to a per-project vault until Bags pays DexScreener Enhanced Token Info (~$299). Dev cannot spend vault funds. Dashboard routes: `POST /api/projects/:id/hold-fund/guaranteed/{upload,preflight,draft,reset,enable}`. Public prefill images: `GET /api/public/hold-fund/:projectId/{icon,header}`.
+
+Only you edit hold fund in the dashboard. Stream Studio and the token page are **read-only**. In simple/goal mode `holdFund.heldSol` mirrors `stats.totalHeldSol` on the dev wallet. In Dex Vault mode `holdFund.heldSol` mirrors on-chain vault balance.
 
 Full docs: [web configuration](https://latrinebot.com/docs/configuration.html#hold-fund-transparency).
 

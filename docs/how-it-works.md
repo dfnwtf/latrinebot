@@ -29,7 +29,7 @@ Latrine Bot turns three on-chain actions into one continuous loop and runs them 
 3. **Split.** The pool after fees is divided by your dashboard percents: **Rewards to distribute %** (`buybackPercent`), **Burn %** (`burnPercent`), and **hold %** (remainder up to 100%). See [configuration](./configuration.md).
 4. **Burn track (optional).** When burn % is above zero, that slice buys the **project token** and **100% of those tokens are SPL-burned**. Separate from the distribute track; works with any reward asset setting.
 5. **Distribute track.** The distribute slice acquires the chosen [reward asset](./configuration.md#reward-asset-what-holders-receive): project-token buyback, Jupiter swap to USDC or a custom mint, or plain SOL.
-6. **Hold slice.** The hold remainder stays in the dev wallet and increments `totalHeldSol`. Optional [hold fund transparency](./configuration.md#hold-fund-transparency) on the token page and Stream Studio.
+6. **Hold slice.** The hold remainder stays in the dev wallet and increments `totalHeldSol`, unless **Dex Vault** is active - then hold fees transfer to a per-project vault each cycle. Optional [hold fund transparency](./configuration.md#hold-fund-transparency) on the token page and Stream Studio.
 7. **Airdrop.** The acquired reward is split among eligible holders by balance share (optional holder perks and X post boost - see configuration). SPL batched transfers; SOL native transfers.
 8. **Wait.** The scheduler sleeps for the configured interval, then repeats.
 

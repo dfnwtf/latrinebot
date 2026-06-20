@@ -2,6 +2,18 @@
 
 All notable changes to `@latrinebot/sdk`.
 
+## [0.5.0] - 2026-06-19
+
+### Added
+- Dex Vault types: `HoldFundGuaranteedSettings`, `HoldFundGuaranteedPublic`, `GuaranteedMeta`, `GuaranteedDexDraft`, `GuaranteedPreflightResult`.
+- `HoldFundMode` now includes `guaranteed`; `HoldFundPublic` adds `goalUsd`, `targetSol`, `progressGoalLine`, `guaranteed`.
+- `ProjectSettings.guaranteedDexDraft` for Dex Prefill draft before activation.
+- OpenAPI `hold-fund` tag: guaranteed dashboard routes and public prefill image URLs.
+
+### Changed
+- `HoldFundPublic.heldSol` description: dev-wallet `totalHeldSol` in simple/goal mode; vault balance in Dex Vault mode.
+- OpenAPI spec version `0.5.0`.
+
 ## [0.4.9] - 2026-06-11
 
 ### Added

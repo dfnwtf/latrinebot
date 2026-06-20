@@ -4,6 +4,19 @@ All notable changes to the Latrine Bot service. Dates are production deploys to 
 
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/). This project follows semantic-ish versioning while pre-1.0 - see [README.md](./README.md).
 
+## [0.5.0] - 2026-06-19
+
+### Added
+- **Dex Vault** (`holdFund.mode: "guaranteed"`) - irreversible escrow for DexScreener Enhanced Token Info (~$299 via Bags.fm). Hold % routes to per-project vault; automatic payment when target is reached.
+- Dashboard session routes: `POST /api/projects/:id/hold-fund/guaranteed/{upload,preflight,draft,reset,enable}`.
+- Public Dex Prefill assets: `GET /api/public/hold-fund/:projectId/{icon,header}`.
+- Public `holdFund.guaranteed` on realm live (vault pubkey, execution status, vault balance as `heldSol`).
+- `@latrinebot/sdk` 0.5.0: `HoldFundGuaranteedPublic`, `GuaranteedMeta`, `GuaranteedDexDraft`, OpenAPI `hold-fund` tag.
+
+### Changed
+- Documentation: Dex Vault across configuration, API reference, security, how-it-works, stream-studio, terms, privacy (site + GitHub mirrors).
+- Legal docs updated for Dex Vault vault wallet, public balance disclosure, and irreversible activation.
+
 ## [0.4.9] - 2026-06-11
 
 ### Added

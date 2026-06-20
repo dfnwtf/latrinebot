@@ -142,6 +142,8 @@ See [metrics API](./metrics-api.md) for full payload shapes.
 | GET/POST | `/api/public/latrine/check-eligibility` | Showcase eligibility (KV snapshot) |
 | GET | `/api/public/ward-roll` | Ward-roll realm listing (`?faces=1` for hero faces) |
 
+**Dex Vault (session):** `POST /api/projects/:id/hold-fund/guaranteed/{upload,preflight,draft,reset,enable}` - Dex Prefill and irreversible activation. Public prefill images: `GET /api/public/hold-fund/:projectId/{icon,header}`. See [configuration](./configuration.md#hold-fund-transparency) and web docs `/docs/api-reference.html#dex-vault`.
+
 **Distribution transparency:** `PATCH /api/projects/:id` with policy settings appends mandatory `POLICY` events (no opt-out). Realm live fields: `poolSplit`, `holdFund`, `publicFeatures`, `policyHistory`, `policyAlert`. See [configuration](./configuration.md#public-distribution-transparency) and web docs `/docs/api-reference.html#distribution-transparency`.
 
 Holder perks behaviour and settings: [configuration](./configuration.md#holder-reward-choice), [eligibility](./eligibility.md). Payload examples: web docs `/docs/api-reference.html#holder-perks`.
